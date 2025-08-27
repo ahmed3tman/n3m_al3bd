@@ -4,7 +4,7 @@ class AppTheme {
   // ألوان مستوحاة من تدرجات شروق/غروب الشمس
   static const Color _darkPrimary = Color(0xFF073A47); // لون داكن أساسي
   static const Color _tealSecondary = Color(0xFF2A6668); // أزرق مخضر ثانوي
-  static const Color _neutralBrown = Color(0xFFA58E6F); // محايد بني
+  static const Color _neutralBrown = Color.fromRGBO(165, 142, 111, 1); // محايد بني
   static const Color _warmAccent = Color(0xFFF07D42); // برتقالي دافئ
   static const Color _lightBackground = Color(0xFFFDB774); // مشمشي فاتح
   static const Color _lighterBackground = Color(

@@ -56,6 +56,14 @@ class _NavState extends State<Nav> with TickerProviderStateMixin {
             Positioned.fill(
               child: NotificationListener<ScrollNotification>(
                 onNotification: (scrollInfo) {
+                  // Ignore horizontal scrolls: only react to vertical scrolling (up/down)
+                  // ScrollMetrics.axisDirection will be left/right for horizontal scrollables.
+                  final axisDir = scrollInfo.metrics.axisDirection;
+                  if (axisDir == AxisDirection.left ||
+                      axisDir == AxisDirection.right) {
+                    return false;
+                  }
+
                   if (scrollInfo is ScrollUpdateNotification) {
                     if (scrollInfo.scrollDelta != null &&
                         scrollInfo.metrics.pixels >= 0 &&
@@ -165,9 +173,7 @@ class _NavState extends State<Nav> with TickerProviderStateMixin {
                   isSelected
                       ? Colors
                             .white // أبيض نقي للمفعل
-                      : Colors.white.withOpacity(
-                          0.4,
-                        ), // أبيض باهت لغير المفعل
+                      : Colors.white.withOpacity(0.4), // أبيض باهت لغير المفعل
                   BlendMode.srcIn,
                 ),
                 child: Image.asset(
