@@ -14,9 +14,6 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> with TickerProviderStateMixin {
   int _currentIndex = 0;
-  bool _isBottomBarVisible = true;
-  double _scrollDistance = 0.0;
-  double _upScrollDistance = 0.0;
   late TabController _tabController;
 
   final List<Widget> _screens = const [
@@ -54,51 +51,10 @@ class _NavState extends State<Nav> with TickerProviderStateMixin {
         body: Stack(
           children: [
             Positioned.fill(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (scrollInfo) {
-                  // Ignore horizontal scrolls: only react to vertical scrolling (up/down)
-                  // ScrollMetrics.axisDirection will be left/right for horizontal scrollables.
-                  final axisDir = scrollInfo.metrics.axisDirection;
-                  if (axisDir == AxisDirection.left ||
-                      axisDir == AxisDirection.right) {
-                    return false;
-                  }
-
-                  if (scrollInfo is ScrollUpdateNotification) {
-                    if (scrollInfo.scrollDelta != null &&
-                        scrollInfo.metrics.pixels >= 0 &&
-                        scrollInfo.metrics.pixels <=
-                            scrollInfo.metrics.maxScrollExtent &&
-                        !scrollInfo.metrics.outOfRange) {
-                      if (scrollInfo.scrollDelta! > 0) {
-                        _scrollDistance += scrollInfo.scrollDelta!;
-                        _upScrollDistance = 0.0;
-                        if (_scrollDistance > 100 && _isBottomBarVisible) {
-                          setState(() {
-                            _isBottomBarVisible = false;
-                          });
-                        }
-                      } else if (scrollInfo.scrollDelta! < 0) {
-                        _upScrollDistance += scrollInfo.scrollDelta!.abs();
-                        if (_upScrollDistance > 30 && !_isBottomBarVisible) {
-                          setState(() {
-                            _isBottomBarVisible = true;
-                          });
-                          _upScrollDistance = 0.0;
-                        }
-                        _scrollDistance = 0.0;
-                      }
-                    }
-                  }
-                  return false;
-                },
-                child: IndexedStack(index: _currentIndex, children: _screens),
-              ),
+              child: IndexedStack(index: _currentIndex, children: _screens),
             ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              bottom: _isBottomBarVisible ? 20 : -100,
+            Positioned(
+              bottom: 20,
               left: MediaQuery.of(context).size.width * 0.04,
               right: MediaQuery.of(context).size.width * 0.04,
               child: Container(
