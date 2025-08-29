@@ -70,7 +70,7 @@ class UnicodeDecoratedVerseNumber extends StatelessWidget {
   const UnicodeDecoratedVerseNumber({
     super.key,
     required this.verseNumber,
-    this.fontSize = 30,
+    this.fontSize = 34,
     this.color,
   });
 

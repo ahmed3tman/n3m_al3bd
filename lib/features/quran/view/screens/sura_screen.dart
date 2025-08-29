@@ -13,11 +13,28 @@ class AyatScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: Text(
-          surah.name,
-          style: AppFonts.suraNameStyle(
-            fontSize: 24,
-            color: Theme.of(context).colorScheme.primary,
+        toolbarHeight: 25, // visual bar remains slim
+        leading: Transform.translate(
+          offset: const Offset(0, -6),
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+            icon: const Icon(Icons.arrow_back, size: 22),
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () => Navigator.of(context).maybePop(),
+          ),
+        ),
+        title: FittedBox(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 15),
+            child: Text(
+              surah.name,
+              style: AppFonts.generalTextStyle(
+                fontSize: 18, // larger visual title
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
