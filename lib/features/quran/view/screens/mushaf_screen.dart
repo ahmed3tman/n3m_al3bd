@@ -92,16 +92,16 @@ class _MushafScreenState extends State<MushafScreen> {
     final surah = widget.allSurahs[currentIndex];
     // compute available height to decide verses per page
     final media = MediaQuery.of(context);
-    const bottomBarHeight = 56.0;
-    const topBarHeight = 44.0; // smaller app bar per user request
+    const bottomBarHeight = 28.0; // minimize bottom area height
+    const topBarHeight = 36.0; // smaller app bar
     final availableHeight =
         media.size.height -
         media.padding.top -
         topBarHeight -
         bottomBarHeight -
-        24;
-    // estimate verse height (approx)
-    const estimatedVerseHeight = 72.0;
+        8; // remove extra padding reserve
+    // estimate verse height (approx) tuned to match Surah ayah styling
+    const estimatedVerseHeight = 84.0;
     final versesPerPage = (availableHeight / estimatedVerseHeight)
         .floor()
         .clamp(4, 30);
@@ -159,12 +159,14 @@ class _MushafScreenState extends State<MushafScreen> {
             ),
           ),
           // small page index at the bottom (single line)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Text(
-              'صفحة ${currentPageIndex + 1} / ${pages.length}',
-              style: Theme.of(context).textTheme.bodySmall,
-              textAlign: TextAlign.center,
+          SizedBox(
+            height: bottomBarHeight,
+            child: Center(
+              child: Text(
+                'صفحة ${currentPageIndex + 1} / ${pages.length}',
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ],
