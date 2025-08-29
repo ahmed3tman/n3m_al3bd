@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jalees/features/quran/model/quran_model.dart';
-import '../screens/ayat_screen.dart';
+import 'package:jalees/features/quran/view/screens/sura_screen.dart';
 
 class SuraCard extends StatelessWidget {
   const SuraCard({super.key, required this.sura});

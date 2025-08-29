@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../model/quran_model.dart';
 import '../../model/mushaf_model.dart';
-import '../../../../core/theme/app_fonts.dart';
-import '../../../../core/share/widgets/decorated_verse_number.dart';
+import 'package:jalees/features/quran/view/widgets/quran/widgets.dart'
+    as quran_widgets;
 
 class MushafScreen extends StatefulWidget {
   final Mushaf mushaf;
@@ -22,7 +22,9 @@ class _MushafScreenState extends State<MushafScreen> {
   late int currentIndex;
   late int currentPageIndex;
   late PageController pageController;
-  late List<List> pages;
+  late List<List<QuranVerse>> pages;
+  late List<int>
+  _surahStartPositions; // cumulative mapping from verse index -> surah
 
   @override
   void initState() {
@@ -30,20 +32,53 @@ class _MushafScreenState extends State<MushafScreen> {
     currentIndex = widget.mushaf.currentSurahIndex;
     currentPageIndex = widget.mushaf.currentPageIndex;
     pageController = PageController(initialPage: currentPageIndex);
-    _buildPages();
+    _surahStartPositions = [];
+    // pages will be built in build() because it depends on screen size
   }
 
-  void _buildPages() {
-    final surah = widget.allSurahs[currentIndex];
-    const versesPerPage = 7;
-    pages = [];
-    for (var i = 0; i < surah.verses.length; i += versesPerPage) {
-      final end = (i + versesPerPage < surah.verses.length)
-          ? i + versesPerPage
-          : surah.verses.length;
-      pages.add(surah.verses.sublist(i, end));
+  /// Build continuous pages across the entire mushaf.
+  void _buildPages(int versesPerPage) {
+    final allVerses = <QuranVerse>[];
+    _surahStartPositions = [];
+    for (var s = 0; s < widget.allSurahs.length; s++) {
+      final surah = widget.allSurahs[s];
+      // record the start position (index) of this surah in the flat verses list
+      _surahStartPositions.add(allVerses.length);
+      // add basmalah at the start of the surah if required
+      if (surah.id != 1 && surah.id != 9) {
+        allVerses.add(
+          QuranVerse(id: 0, text: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ'),
+        );
+      }
+      allVerses.addAll(surah.verses);
     }
-    if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
+
+    pages = [];
+    for (var i = 0; i < allVerses.length; i += versesPerPage) {
+      final end = (i + versesPerPage < allVerses.length)
+          ? i + versesPerPage
+          : allVerses.length;
+      pages.add(allVerses.sublist(i, end));
+    }
+
+    if (currentPageIndex >= pages.length) {
+      currentPageIndex = pages.length - 1;
+    }
+  }
+
+  // find current surah index based on flat verse index (index of first verse in page)
+  int _surahIndexForPage(int pageIndex, int versesPerPage) {
+    final firstVerseGlobalIndex = pageIndex * versesPerPage;
+    // find largest surahStartPositions[i] <= firstVerseGlobalIndex
+    var idx = 0;
+    for (var i = 0; i < _surahStartPositions.length; i++) {
+      if (_surahStartPositions[i] <= firstVerseGlobalIndex) {
+        idx = i;
+      } else {
+        break;
+      }
+    }
+    return idx.clamp(0, widget.allSurahs.length - 1);
   }
 
   void _updateAndSave() async {
@@ -55,13 +90,52 @@ class _MushafScreenState extends State<MushafScreen> {
   @override
   Widget build(BuildContext context) {
     final surah = widget.allSurahs[currentIndex];
+    // compute available height to decide verses per page
+    final media = MediaQuery.of(context);
+    const bottomBarHeight = 56.0;
+    const topBarHeight = 44.0; // smaller app bar per user request
+    final availableHeight =
+        media.size.height -
+        media.padding.top -
+        topBarHeight -
+        bottomBarHeight -
+        24;
+    // estimate verse height (approx)
+    const estimatedVerseHeight = 72.0;
+    final versesPerPage = (availableHeight / estimatedVerseHeight)
+        .floor()
+        .clamp(4, 30);
+
+    _buildPages(versesPerPage);
+
+    // ensure pageController position valid
+    if (pageController.positions.isEmpty) {
+      pageController = PageController(initialPage: currentPageIndex);
+    } else if (pageController.page != null &&
+        pageController.page! >= pages.length) {
+      pageController.dispose();
+      pageController = PageController(initialPage: currentPageIndex);
+    }
+
+    // derive current surah based on currentPageIndex
+    if (_surahStartPositions.isNotEmpty) {
+      currentIndex = _surahIndexForPage(currentPageIndex, versesPerPage);
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.mushaf.name),
+        toolbarHeight: topBarHeight,
+        title: Text(
+          widget.allSurahs[currentIndex].name,
+          style: const TextStyle(fontSize: 14),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.bookmark),
             onPressed: () {
+              // save current page and surah
+              widget.mushaf.currentPageIndex = currentPageIndex;
+              widget.mushaf.currentSurahIndex = currentIndex;
               _updateAndSave();
               ScaffoldMessenger.of(
                 context,
@@ -72,130 +146,25 @@ class _MushafScreenState extends State<MushafScreen> {
       ),
       body: Column(
         children: [
-          // PageView for paginated verses
+          // PageView for paginated verses (pages are built across the whole mushaf)
           Expanded(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  child: Center(
-                    child: Text(
-                      surah.name,
-                      textAlign: TextAlign.center,
-                      style: AppFonts.suraNameStyle(
-                        fontSize: 26,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                if (surah.id != 1 && surah.id != 9)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Text(
-                      'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                      textAlign: TextAlign.center,
-                      style: AppFonts.basmalahStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                Expanded(
-                  child: PageView.builder(
-                    controller: pageController,
-                    itemCount: pages.length,
-                    onPageChanged: (p) {
-                      setState(() => currentPageIndex = p);
-                    },
-                    itemBuilder: (context, pageIndex) {
-                      final page = pages[pageIndex];
-                      return SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 16,
-                        ),
-                        child: Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              for (final verse in page) ...[
-                                RichText(
-                                  textAlign: TextAlign.justify,
-                                  text: TextSpan(
-                                    style: AppFonts.quranTextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onBackground,
-                                    ),
-                                    children: [
-                                      TextSpan(text: verse.text),
-                                      WidgetSpan(
-                                        alignment: PlaceholderAlignment.middle,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                          ),
-                                          child: UnicodeDecoratedVerseNumber(
-                                            verseNumber: verse.id,
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                              ],
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text('صفحة ${currentPageIndex + 1} / ${pages.length}'),
-                ),
-              ],
+            child: quran_widgets.VersesPageView(
+              pages: pages.cast<List<QuranVerse>>(),
+              controller: pageController,
+              onPageChanged: (p) => setState(() {
+                currentPageIndex = p;
+                currentIndex = _surahIndexForPage(p, versesPerPage);
+              }),
+              pageHeight: availableHeight,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            color: Theme.of(context).colorScheme.surface,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.navigate_before),
-                  onPressed: currentIndex > 0
-                      ? () => setState(() {
-                          currentIndex--;
-                          currentPageIndex = 0;
-                          pageController.dispose();
-                          pageController = PageController(initialPage: 0);
-                          _buildPages();
-                        })
-                      : null,
-                ),
-                Text('${currentIndex + 1} / ${widget.allSurahs.length}'),
-                IconButton(
-                  icon: const Icon(Icons.navigate_next),
-                  onPressed: currentIndex < widget.allSurahs.length - 1
-                      ? () => setState(() {
-                          currentIndex++;
-                          currentPageIndex = 0;
-                          pageController.dispose();
-                          pageController = PageController(initialPage: 0);
-                          _buildPages();
-                        })
-                      : null,
-                ),
-              ],
+          // small page index at the bottom (single line)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Text(
+              'صفحة ${currentPageIndex + 1} / ${pages.length}',
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.center,
             ),
           ),
         ],
