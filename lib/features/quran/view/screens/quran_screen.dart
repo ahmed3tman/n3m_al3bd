@@ -96,9 +96,12 @@ class _QuranScreenState extends State<QuranScreen> {
                   } else if (state is QuranError) {
                     return Center(child: Text('حدث خطأ: ${state.message}'));
                   } else if (state is QuranLoaded) {
-                    final surahs = state.surahs
-                        .where((s) => s.name.contains(search))
-                        .toList();
+                    final surahs =
+                        state.surahs
+                            .where((s) => s.name.contains(search))
+                            .toList()
+                          // ensure displayed in the Quran canonical order by id
+                          ..sort((a, b) => a.id.compareTo(b.id));
                     if (surahs.isEmpty) {
                       return const Center(child: Text('لا توجد نتائج'));
                     }

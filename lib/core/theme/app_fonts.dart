@@ -17,7 +17,12 @@ class AppFonts {
   // ألوان النصوص بتدرجات شروق/غروب
   static const Color primaryTextColor = Color(0xFF073A47); // داكن أساسي
   static const Color secondaryTextColor = Color(0xFF2A6668); // أزرق مخضر
-  static const Color goldTextColor = Color.fromARGB(255, 13, 6, 3); // برتقالي دافئ
+  static const Color goldTextColor = Color.fromARGB(
+    255,
+    13,
+    6,
+    3,
+  ); // برتقالي دافئ
   static const Color mutedTextColor = Color(0xFFA58E6F); // محايد بني
 
   // أساليب النصوص الجاهزة
@@ -81,7 +86,7 @@ class AppFonts {
     return TextStyle(
       fontFamily: suraNameFont,
       fontSize: fontSize,
-      color: color ?? secondaryTextColor,
+      color: color ?? const Color.fromARGB(255, 5, 90, 95),
       fontWeight: fontWeight,
       letterSpacing: 0.5,
     );

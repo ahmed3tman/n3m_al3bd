@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:jalees/core/theme/app_fonts.dart';
 import 'package:flutter/services.dart';
 import '../../model/quran_model.dart';
 import '../../model/mushaf_model.dart';
@@ -263,7 +264,7 @@ class _MushafScreenState extends State<MushafScreen> {
                   Expanded(
                     child: Text(
                       widget.allSurahs[currentIndex].name,
-                      style: const TextStyle(
+                      style: AppFonts.suraNameStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
