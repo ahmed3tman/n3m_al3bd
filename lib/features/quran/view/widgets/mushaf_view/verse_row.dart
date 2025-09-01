@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jalees/features/quran/model/quran_model.dart';
-import 'package:jalees/core/share/widgets/decorated_verse_number.dart';
+import 'package:jalees/core/utils/quran_verse_numbers.dart';
 import 'package:jalees/core/theme/app_fonts.dart';
 
 /// Single verse row using RichText and the decorated verse number.
@@ -37,19 +37,24 @@ class VerseRow extends StatelessWidget {
               text: TextSpan(
                 style: AppFonts.quranTextStyle(
                   color: Theme.of(context).colorScheme.onBackground,
-                ),
+                ).copyWith(wordSpacing: -0.3, letterSpacing: -0.3),
                 children: [
                   TextSpan(text: verse.text),
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: SizedBox(
-                      width: 4,
-                      child: UnicodeDecoratedVerseNumber(
-                        verseNumber: verse.id,
-                        fontSize: 20,
-                      ),
-                    ),
+                  // Add the verse number with symmetric thin spaces to balance spacing.
+                  TextSpan(
+                    text:
+                        '\u2009\u061C${QuranVerseNumbers.getDecorativeVerseNumber(verse.id)}\u061C\u2009',
+                    style:
+                        AppFonts.verseNumberStyle(
+                          fontSize: 20,
+                          color: AppFonts.brightGold,
+                        ).copyWith(
+                          fontFamily: AppFonts.versesFont,
+                          height: 1.0,
+                          // shadows: AppFonts.goldShadows(),
+                        ),
                   ),
+                  // No extra trailing space; spacing is symmetric now.
                 ],
               ),
             ),

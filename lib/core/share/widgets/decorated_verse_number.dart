@@ -78,13 +78,20 @@ class UnicodeDecoratedVerseNumber extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Text(
-        QuranVerseNumbers.getDecorativeVerseNumber(verseNumber),
-        textAlign: TextAlign.center,
-        style: AppFonts.verseNumberStyle(
-          fontSize: fontSize!,
-          color: color ?? Theme.of(context).colorScheme.primary,
-        ).copyWith(shadows: AppFonts.goldShadows()),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: Text(
+          QuranVerseNumbers.getDecorativeVerseNumber(verseNumber),
+          textAlign: TextAlign.center,
+          style:
+              AppFonts.verseNumberStyle(
+                fontSize: fontSize!,
+                color: color ?? AppFonts.brightGold,
+              ).copyWith(
+                // Prefer the 'Verses' font if registered in pubspec; otherwise fallback remains
+                fontFamily: AppFonts.versesFont,
+              ),
+        ),
       ),
     );
   }

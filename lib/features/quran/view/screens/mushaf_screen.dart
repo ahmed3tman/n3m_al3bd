@@ -4,8 +4,8 @@ import 'package:jalees/core/theme/app_fonts.dart';
 import 'package:flutter/services.dart';
 import '../../model/quran_model.dart';
 import '../../model/mushaf_model.dart';
-import 'package:jalees/features/quran/view/widgets/quran/widgets.dart'
-    as quran_widgets;
+import 'package:jalees/features/quran/view/widgets/mushaf_view/widgets.dart'
+    as mushaf_view_widgets;
 
 class MushafScreen extends StatefulWidget {
   final Mushaf mushaf;
@@ -26,8 +26,7 @@ class _MushafScreenState extends State<MushafScreen> {
   late int currentPageIndex;
   late PageController pageController;
   late List<List<QuranVerse>> pages;
-  late Map<int, List<Map<String, dynamic>>>
-  _pageMapping; // pageNumber -> list of {sura_no, aya_no}
+  late Map<int, List<Map<String, dynamic>>> _pageMapping;
   late List<int?> pageStartSurahIds;
   bool _isSaved = false;
 
@@ -42,7 +41,6 @@ class _MushafScreenState extends State<MushafScreen> {
     _isSaved =
         widget.mushaf.currentPageIndex == currentPageIndex &&
         widget.mushaf.currentSurahIndex == currentIndex;
-    // load mapping once
     _loadPageMapping();
   }
 
@@ -62,14 +60,10 @@ class _MushafScreenState extends State<MushafScreen> {
       }
       setState(() {});
     } catch (e) {
-      // if mapping fails, keep pages empty and allow fallback behavior
-      // log to console for debugging
-      // ignore: avoid_print
-      print('Failed to load page mapping: $e');
+      debugPrint('Failed to load page mapping: $e');
     }
   }
 
-  /// Build pages strictly from the quran_page_mapping.json mapping.
   void _buildPagesFromMapping() {
     pages = [];
     pageStartSurahIds = [];
@@ -96,8 +90,8 @@ class _MushafScreenState extends State<MushafScreen> {
             verses: [],
           ),
         );
-        if (surah.id == -1) continue; // skip if not found
-        if (ayaNo <= 0 || ayaNo > surah.verses.length) continue; // skip invalid
+        if (surah.id == -1) continue;
+        if (ayaNo <= 0 || ayaNo > surah.verses.length) continue;
         pageVerses.add(surah.verses[ayaNo - 1]);
       }
       pageStartSurahIds.add(startSurahId);
@@ -105,7 +99,6 @@ class _MushafScreenState extends State<MushafScreen> {
     }
   }
 
-  // find current surah index for a given page index (based on first verse on the page)
   int _surahIndexForPage(int pageIndex) {
     if (pages.isEmpty || pageIndex < 0 || pageIndex >= pages.length) return 0;
     final first = pages[pageIndex].isNotEmpty ? pages[pageIndex].first : null;
@@ -119,11 +112,9 @@ class _MushafScreenState extends State<MushafScreen> {
     return 0;
   }
 
-  /// Returns the first page index (0-based) that contains any verse from [surahId].
   int firstPageForSurah(int surahId) {
     for (var p = 0; p < pages.length; p++) {
       for (var v in pages[p]) {
-        // find surah id by searching the verse in surah list (fast enough)
         final surah = widget.allSurahs.firstWhere(
           (s) => s.verses.contains(v),
           orElse: () => QuranSurah(
@@ -147,9 +138,7 @@ class _MushafScreenState extends State<MushafScreen> {
     await MushafStorage.updateMushaf(widget.mushaf);
   }
 
-  /// Navigate to a 1-based page number as in the physical mushaf.
   Future<void> goToPageNumber(int pageNumber) async {
-    // ensure mapping is loaded
     if (_pageMapping.isEmpty) await _loadPageMapping();
     if (pages.isEmpty) return;
     final idx = (pageNumber - 1).clamp(0, pages.length - 1);
@@ -157,7 +146,6 @@ class _MushafScreenState extends State<MushafScreen> {
       currentPageIndex = idx;
       currentIndex = _surahIndexForPage(currentPageIndex);
     });
-    // animate
     try {
       await pageController.animateToPage(
         currentPageIndex,
@@ -170,7 +158,6 @@ class _MushafScreenState extends State<MushafScreen> {
     _updateAndSave();
   }
 
-  /// Navigate to the first page that contains [surahId].
   Future<void> goToSurah(int surahId) async {
     if (_pageMapping.isEmpty) await _loadPageMapping();
     if (pages.isEmpty) return;
@@ -181,33 +168,27 @@ class _MushafScreenState extends State<MushafScreen> {
   @override
   Widget build(BuildContext context) {
     final surah = widget.allSurahs[currentIndex];
-    // compute available height to decide verses per page
     final media = MediaQuery.of(context);
-    const bottomBarHeight =
-        30.0; // reduced bottom area to make the page index bar shorter
-    const navBarHeight = 100.0; // Nav screen bottom bar height (20 + 80)
+    const bottomBarHeight = 30.0;
+    const navBarHeight = 100.0;
     final availableHeight =
         media.size.height -
         media.padding.top -
         bottomBarHeight -
         navBarHeight -
-        8; // remove extra padding reserve
-    // estimate verse height (approx) tuned to match Surah ayah styling
+        8;
     const estimatedVerseHeight = 84.0;
     final versesPerPage = (availableHeight / estimatedVerseHeight)
         .floor()
         .clamp(4, 30);
 
-    // if pages not loaded yet, show loading state
     if (pages.isEmpty) {
-      // ensure pageController position valid
       if (pageController.positions.isEmpty) {
         pageController = PageController(initialPage: currentPageIndex);
       }
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    // ensure pageController position valid
     if (pageController.positions.isEmpty) {
       pageController = PageController(initialPage: currentPageIndex);
     } else if (pageController.page != null &&
@@ -216,7 +197,6 @@ class _MushafScreenState extends State<MushafScreen> {
       pageController = PageController(initialPage: currentPageIndex);
     }
 
-    // derive current surah based on currentPageIndex using mapping-built pages
     if (pages.isNotEmpty) {
       currentIndex = _surahIndexForPage(currentPageIndex);
     }
@@ -235,9 +215,7 @@ class _MushafScreenState extends State<MushafScreen> {
         ),
         child: Column(
           children: [
-            // Top row: surah name and bookmark icon
             Padding(
-              // increased top padding to add more space before the top bar
               padding: const EdgeInsets.only(
                 top: 40,
                 left: 4,
@@ -255,9 +233,22 @@ class _MushafScreenState extends State<MushafScreen> {
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () => Navigator.of(context).maybePop(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.arrow_back, size: 26),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: Center(
+                            child: Icon(
+                              // Flip the direction compared to previous behavior
+                              Directionality.of(context) == TextDirection.rtl
+                                  ? Icons.arrow_back_ios_new_rounded
+                                  : Icons.arrow_forward_ios_rounded,
+                              size: 18,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -265,7 +256,7 @@ class _MushafScreenState extends State<MushafScreen> {
                     child: Text(
                       widget.allSurahs[currentIndex].name,
                       style: AppFonts.suraNameStyle(
-                        fontSize: 20,
+                        fontSize: 30,
                         fontWeight: FontWeight.w700,
                       ),
                       textAlign: TextAlign.center,
@@ -280,12 +271,15 @@ class _MushafScreenState extends State<MushafScreen> {
                         widget.mushaf.currentPageIndex = currentPageIndex;
                         widget.mushaf.currentSurahIndex = currentIndex;
                         await _updateAndSave();
-                        setState(() {
-                          _isSaved = true;
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('تم حفظ العلامة')),
-                        );
+                        if (mounted) {
+                          setState(() {
+                            _isSaved = true;
+                          });
+                          final messenger = ScaffoldMessenger.of(context);
+                          messenger.showSnackBar(
+                            const SnackBar(content: Text('تم حفظ العلامة')),
+                          );
+                        }
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -294,7 +288,7 @@ class _MushafScreenState extends State<MushafScreen> {
                           size: 26,
                           color: _isSaved
                               ? Theme.of(context).colorScheme.primary
-                              : null,
+                              : Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
@@ -304,7 +298,7 @@ class _MushafScreenState extends State<MushafScreen> {
             ),
             // PageView for paginated verses (pages are built across the whole mushaf)
             Expanded(
-              child: quran_widgets.VersesPageView(
+              child: mushaf_view_widgets.VersesPageView(
                 pages: pages.cast<List<QuranVerse>>(),
                 controller: pageController,
                 onPageChanged: (p) => setState(() {
@@ -320,7 +314,6 @@ class _MushafScreenState extends State<MushafScreen> {
                 allSurahs: widget.allSurahs,
               ),
             ),
-            // larger page index bar at the bottom
             SizedBox(
               height: bottomBarHeight,
               child: Text(

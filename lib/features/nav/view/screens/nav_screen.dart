@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:jalees/core/share/widgets/gradient_background.dart';
 import 'package:jalees/features/quran/view/screens/quran_screen.dart';
 import 'package:jalees/features/bukhari/view/screens/bukhari_screen.dart';
@@ -15,6 +16,7 @@ class Nav extends StatefulWidget {
 class _NavState extends State<Nav> with TickerProviderStateMixin {
   int _currentIndex = 0;
   late TabController _tabController;
+  bool _isBottomBarVisible = true;
 
   final List<Widget> _screens = const [
     QuranScreen(),
@@ -50,61 +52,99 @@ class _NavState extends State<Nav> with TickerProviderStateMixin {
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
+            // Listen for scrolls from child screens and toggle bottom bar visibility.
             Positioned.fill(
-              child: IndexedStack(index: _currentIndex, children: _screens),
+              child: NotificationListener<UserScrollNotification>(
+                onNotification: (notification) {
+                  // Only react to vertical scrolling
+                  if (notification.metrics.axis == Axis.vertical) {
+                    if (notification.direction == ScrollDirection.reverse) {
+                      // Scrolling down -> hide
+                      if (_isBottomBarVisible) {
+                        setState(() => _isBottomBarVisible = false);
+                      }
+                    } else if (notification.direction ==
+                        ScrollDirection.forward) {
+                      // Scrolling up -> show
+                      if (!_isBottomBarVisible) {
+                        setState(() => _isBottomBarVisible = true);
+                      }
+                    }
+                  }
+                  return false; // allow notification to continue bubbling
+                },
+                child: IndexedStack(index: _currentIndex, children: _screens),
+              ),
             ),
             Positioned(
               bottom: 20,
               left: MediaQuery.of(context).size.width * 0.04,
               right: MediaQuery.of(context).size.width * 0.04,
-              child: Container(
-                height: 80,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.secondary.withOpacity(0.2),
-                    width: 1,
+              child: AnimatedSlide(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOut,
+                // Slide down out of view when hidden
+                offset: _isBottomBarVisible
+                    ? Offset.zero
+                    : const Offset(0, 1.6),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: _isBottomBarVisible ? 1 : 0,
+                  child: IgnorePointer(
+                    ignoring: !_isBottomBarVisible,
+                    child: Container(
+                      height: 80,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withOpacity(0.2),
+                          width: 1,
+                        ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.95),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: TabBar(
+                        indicatorPadding: const EdgeInsets.all(6),
+                        controller: _tabController,
+                        onTap: _onTabTapped,
+                        indicator: BoxDecoration(
+                          color: Colors.white.withOpacity(
+                            0.2,
+                          ), // خلفية أفتح للأيقونة المفعلة
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.white.withOpacity(
+                          0.4,
+                        ), // أبيض باهت
+                        labelStyle: const TextStyle(
+                          fontFamily: 'GeneralFont',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11, // زيادة حجم النص
+                        ),
+                        unselectedLabelStyle: const TextStyle(
+                          fontFamily: 'GeneralFont',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10, // زيادة حجم النص
+                        ),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        splashFactory: NoSplash.splashFactory,
+                        overlayColor: WidgetStateProperty.all(
+                          Colors.transparent,
+                        ),
+                        dividerColor: Colors.transparent,
+                        tabs: [
+                          _buildTab('assets/icons/quran.png', 'القرآن', 0),
+                          _buildTab('assets/icons/hadeeth.png', 'أحاديث', 1),
+                          _buildTab('assets/icons/azkar.png', 'أذكار', 2),
+                          _buildTab('assets/icons/calendar.png', 'جدولي', 3),
+                        ],
+                      ),
+                    ),
                   ),
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.primary.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: TabBar(
-                  indicatorPadding: const EdgeInsets.all(6),
-                  controller: _tabController,
-                  onTap: _onTabTapped,
-                  indicator: BoxDecoration(
-                    color: Colors.white.withOpacity(
-                      0.2,
-                    ), // خلفية أفتح للأيقونة المفعلة
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.white.withOpacity(
-                    0.4,
-                  ), // أبيض باهت
-                  labelStyle: const TextStyle(
-                    fontFamily: 'GeneralFont',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11, // زيادة حجم النص
-                  ),
-                  unselectedLabelStyle: const TextStyle(
-                    fontFamily: 'GeneralFont',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 10, // زيادة حجم النص
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  splashFactory: NoSplash.splashFactory,
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  dividerColor: Colors.transparent,
-                  tabs: [
-                    _buildTab('assets/icons/quran.png', 'القرآن', 0),
-                    _buildTab('assets/icons/hadeeth.png', 'أحاديث', 1),
-                    _buildTab('assets/icons/azkar.png', 'أذكار', 2),
-                    _buildTab('assets/icons/calendar.png', 'جدولي', 3),
-                  ],
                 ),
               ),
             ),

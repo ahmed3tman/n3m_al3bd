@@ -19,7 +19,7 @@ class SuraHeader extends StatelessWidget {
               surah.name,
               textAlign: TextAlign.center,
               style: AppFonts.suraNameStyle(
-                fontSize: 26,
+                fontSize: 28,
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),

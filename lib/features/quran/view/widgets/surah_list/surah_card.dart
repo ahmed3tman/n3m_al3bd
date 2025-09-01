@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jalees/features/quran/model/quran_model.dart';
-import 'package:jalees/features/quran/view/screens/sura_screen.dart';
+import 'package:jalees/features/quran/view/screens/surah_screen.dart';
 import 'package:jalees/core/theme/app_fonts.dart';
 
 // helper: convert ASCII digits to Arabic-Indic digits (٠١٢٣٤٥٦٧٨٩)
@@ -23,8 +23,8 @@ String _toArabicDigits(Object value) {
 
 // NOTE: custom mapping/list removed — display surah name directly
 
-class SuraCard extends StatelessWidget {
-  const SuraCard({super.key, required this.sura});
+class SurahCard extends StatelessWidget {
+  const SurahCard({super.key, required this.sura});
 
   final QuranSurah sura;
 
@@ -97,7 +97,6 @@ class SuraCard extends StatelessWidget {
           title: ArabicTextWidget(
             text: sura.name,
             style: AppFonts.suraNameStyle(
-
               fontSize: 40,
               fontWeight: FontWeight.w800,
               color: const Color.fromARGB(255, 5, 90, 95),

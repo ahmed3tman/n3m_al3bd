@@ -5,9 +5,11 @@ class AppFonts {
   static const String uthmanicHafs = 'UthmanicHafs';
   static const String suraNameFont = 'SuraNameFont';
   static const String generalFont = 'GeneralFont';
+  // Custom font for verse numbers (to be added by the user in pubspec/fonts)
+  static const String versesFont = 'Verses';
 
   // أحجام الخطوط المختلفة للتصميم الإسلامي
-  static const double verseTextSize = 28.0;
+  static const double verseTextSize = 25.0;
   static const double hadithTextSize = 18.0;
   static const double azkarTextSize = 18.0;
   static const double titleSize = 24.0;
@@ -22,8 +24,15 @@ class AppFonts {
     13,
     6,
     3,
-  ); // برتقالي دافئ
-  static const Color mutedTextColor = Color(0xFFA58E6F); // محايد بني
+  ); // برتقالي دافئ (غامق)
+  // ذهبى واضح ومشرق لأرقام الآيات
+  static const Color brightGold = Color.fromARGB(255, 193, 67, 0);
+  static const Color mutedTextColor = Color.fromARGB(
+    255,
+    234,
+    207,
+    172,
+  ); // محايد بني
 
   // أساليب النصوص الجاهزة
 
@@ -40,8 +49,8 @@ class AppFonts {
       color: color ?? primaryTextColor,
       height: height,
       letterSpacing: letterSpacing,
-      wordSpacing: 2.0,
-      fontWeight: FontWeight.w500,
+      // wordSpacing: 0.1,
+      fontWeight: FontWeight.w400,
     );
   }
 
@@ -137,13 +146,14 @@ class AppFonts {
   /// نمط أرقام الآيات
   static TextStyle verseNumberStyle({double fontSize = 16.0, Color? color}) {
     return TextStyle(
+      // Default to UthmanicHafs; widgets can override with versesFont when available
       fontFamily: uthmanicHafs,
       fontSize: fontSize,
       color: color ?? primaryTextColor,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w500,
       letterSpacing: 0.5,
       shadows: const [
-        Shadow(color: goldTextColor, blurRadius: 1.5, offset: Offset(0.5, 0.5)),
+        Shadow(color: goldTextColor, blurRadius: 1.5, offset: Offset(0.1, 0.1)),
       ],
     );
   }

@@ -4,7 +4,7 @@ import 'package:jalees/core/share/widgets/custom_search_bar.dart';
 import 'package:jalees/core/share/widgets/gradient_background.dart';
 import 'package:jalees/features/quran/view/widgets/mushaf/widgets.dart'
     as mushaf_widgets;
-import 'package:jalees/features/quran/view/widgets/surah/widgets.dart'
+import 'package:jalees/features/quran/view/widgets/surah_list/widgets.dart'
     as surah_widgets;
 import '../../cubit/quran_cubit.dart';
 import '../../cubit/quran_state.dart';
@@ -183,7 +183,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             ),
                           );
                         }
-                        return surah_widgets.SuraCard(sura: surahs[index - 1]);
+                        return surah_widgets.SurahCard(sura: surahs[index - 1]);
                       },
                     );
                   }
