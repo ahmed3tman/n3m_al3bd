@@ -29,7 +29,7 @@ class SuraHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Text(
-              'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+              '﷽',
               textAlign: TextAlign.center,
               style: AppFonts.basmalahStyle(
                 color: Theme.of(context).colorScheme.primary,

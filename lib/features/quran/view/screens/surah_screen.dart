@@ -95,7 +95,7 @@ class AyatScreen extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+                                  '﷽',
                                   textAlign: TextAlign.center,
                                   style: AppFonts.basmalahStyle(
                                     color: Theme.of(

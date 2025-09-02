@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jalees/core/theme/app_fonts.dart';
+import 'package:jalees/core/utils/quran_verse_numbers.dart';
 import 'package:jalees/features/quran/data/page_mapping_repository.dart';
 import '../../model/quran_model.dart';
 import '../../model/mushaf_model.dart';
@@ -193,7 +194,8 @@ class _MushafScreenState extends State<MushafScreen> {
   Widget build(BuildContext context) {
     final surah = widget.allSurahs[currentIndex];
     final media = MediaQuery.of(context);
-    const bottomBarHeight = 30.0;
+    // slightly taller bottom bar for better tap/visibility
+    const bottomBarHeight = 44.0;
     const navBarHeight = 100.0;
     final availableHeight =
         media.size.height -
@@ -296,7 +298,7 @@ class _MushafScreenState extends State<MushafScreen> {
                 : null;
             bool pageHasBasmalahAtTop = false;
             if (headerStartSurahId != null) {
-              const basmalahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+              const basmalahText = '﷽';
               final page = pages[idx];
               pageHasBasmalahAtTop =
                   page.isNotEmpty &&
@@ -331,7 +333,7 @@ class _MushafScreenState extends State<MushafScreen> {
             final isBaqarahFirstPage = headerStartSurahId == 2;
             bool pageHasBasmalahAtTop = false;
             if (headerStartSurahId != null) {
-              const basmalahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+              const basmalahText = '﷽';
               final pageList = pages[idx];
               pageHasBasmalahAtTop =
                   pageList.isNotEmpty &&
@@ -475,13 +477,29 @@ class _MushafScreenState extends State<MushafScreen> {
             ),
             SizedBox(
               height: bottomBarHeight,
-              child: Text(
-                'صفحة ${currentPageIndex + 1} / ${pages.length}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+              child: Center(
+                child: Container(
+                  width: double.infinity,
+                  // add a small bottom margin to lift the bar slightly
+                  margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                  height: 36,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.08),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'صفحة ${QuranVerseNumbers.convertToArabicNumerals((currentPageIndex + 1).toString())} / ${QuranVerseNumbers.convertToArabicNumerals(pages.length.toString())}',
+                    style: AppFonts.generalTextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
           ],

@@ -47,7 +47,13 @@ class SurahInfoPanel extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 4),
-        Text(label, style: AppFonts.captionStyle(fontSize: 12)),
+        Text(
+          label,
+          style: AppFonts.captionStyle(
+            fontSize: 12,
+            color: AppFonts.secondaryTextColor,
+          ),
+        ),
         const SizedBox(height: 2),
         Text(
           value,

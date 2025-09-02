@@ -149,12 +149,10 @@ class AppFonts {
       // Default to UthmanicHafs; widgets can override with versesFont when available
       fontFamily: uthmanicHafs,
       fontSize: fontSize,
-      color: color ?? primaryTextColor,
+      // Verse numbers should use the bright/gold color by default
+      color: color ?? brightGold,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.5,
-      shadows: const [
-        Shadow(color: goldTextColor, blurRadius: 1.5, offset: Offset(0.1, 0.1)),
-      ],
     );
   }
 
