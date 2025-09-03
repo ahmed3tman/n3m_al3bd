@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jalees/core/theme/app_fonts.dart';
 import 'package:jalees/core/utils/quran_verse_numbers.dart';
 import 'package:jalees/features/quran/data/page_mapping_repository.dart';
+import 'package:jalees/features/quran/data/line_mapping_repository.dart';
 import '../../model/quran_model.dart';
 import '../../model/mushaf_model.dart';
 import 'package:jalees/features/quran/view/widgets/mushaf_view/widgets.dart'
@@ -27,9 +28,9 @@ class _MushafScreenState extends State<MushafScreen> {
   late PageController pageController;
   late List<List<QuranVerse>> pages;
   late Map<int, List<Map<String, dynamic>>> _pageMapping;
+  Map<int, List<List<Map<String, int>>>> _lineMapping = const {};
   late List<int?> pageStartSurahIds;
   bool _isSaved = false;
-  int? _lastPrewarmCenter;
 
   @override
   void initState() {
@@ -56,19 +57,37 @@ class _MushafScreenState extends State<MushafScreen> {
       }
       // no setState here; first build will use the prepared data
       // Also, prewarm in background for neighbors
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        PageMappingRepository.ensureLoaded(); // ensure future stays warm
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // ensure futures stay warm
+        PageMappingRepository.ensureLoaded();
+        // Load line mapping in background as well
+        final lm = await LineMappingRepository.ensureLoaded();
+        if (mounted) {
+          setState(() {
+            _lineMapping = lm;
+          });
+        }
       });
     } else {
       // Kick off loading in background, but render instantly without spinner.
-      PageMappingRepository.ensureLoaded().then((map) {
+      PageMappingRepository.ensureLoaded().then((map) async {
         if (!mounted) return;
         _pageMapping = map;
         _buildPagesFromMapping();
         if (currentPageIndex >= pages.length) {
           currentPageIndex = pages.isNotEmpty ? pages.length - 1 : 0;
         }
-        setState(() {});
+        // Load line mapping in parallel
+        try {
+          final lm = await LineMappingRepository.ensureLoaded();
+          if (mounted) {
+            setState(() {
+              _lineMapping = lm;
+            });
+          }
+        } catch (_) {
+          if (mounted) setState(() {});
+        }
       });
     }
   }
@@ -195,7 +214,7 @@ class _MushafScreenState extends State<MushafScreen> {
     final surah = widget.allSurahs[currentIndex];
     final media = MediaQuery.of(context);
     // slightly taller bottom bar for better tap/visibility
-    const bottomBarHeight = 44.0;
+    const bottomBarHeight = 36.0;
     const navBarHeight = 100.0;
     final availableHeight =
         media.size.height -
@@ -282,85 +301,7 @@ class _MushafScreenState extends State<MushafScreen> {
       currentIndex = _surahIndexForPage(currentPageIndex);
     }
 
-    // Prewarm sizing cache for current and adjacent pages after first frame,
-    // so we don't block build and scrolling feels instant on first swipe.
-    if (_lastPrewarmCenter != currentPageIndex && pages.isNotEmpty) {
-      _lastPrewarmCenter = currentPageIndex;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        try {
-          final horizontalPadding = 4.0;
-          final availableWidth = media.size.width - horizontalPadding * 2;
-
-          int headerLinesFor(int idx) {
-            final headerStartSurahId =
-                (pageStartSurahIds.isNotEmpty && idx < pageStartSurahIds.length)
-                ? pageStartSurahIds[idx]
-                : null;
-            bool pageHasBasmalahAtTop = false;
-            if (headerStartSurahId != null) {
-              const basmalahText = '﷽';
-              final page = pages[idx];
-              pageHasBasmalahAtTop =
-                  page.isNotEmpty &&
-                  (page.first.id == 0 ||
-                      page.first.text.trim() == basmalahText);
-            }
-            final isBasmalahAllowedForSurah =
-                (pageStartSurahIds.isNotEmpty && idx < pageStartSurahIds.length)
-                ? (pageStartSurahIds[idx] != null &&
-                      pageStartSurahIds[idx] != 1 &&
-                      pageStartSurahIds[idx] != 9)
-                : false;
-            final headerLines =
-                (pageStartSurahIds.isNotEmpty &&
-                    idx < pageStartSurahIds.length &&
-                    pageStartSurahIds[idx] != null)
-                ? ((pageHasBasmalahAtTop || !isBasmalahAllowedForSurah) ? 1 : 2)
-                : 0;
-            return headerLines;
-          }
-
-          for (final idx in [
-            currentPageIndex - 1,
-            currentPageIndex,
-            currentPageIndex + 1,
-          ]) {
-            if (idx < 0 || idx >= pages.length) continue;
-            final headerStartSurahId = (idx < pageStartSurahIds.length)
-                ? pageStartSurahIds[idx]
-                : null;
-            final isFatihaFirstPage = headerStartSurahId == 1;
-            final isBaqarahFirstPage = headerStartSurahId == 2;
-            bool pageHasBasmalahAtTop = false;
-            if (headerStartSurahId != null) {
-              const basmalahText = '﷽';
-              final pageList = pages[idx];
-              pageHasBasmalahAtTop =
-                  pageList.isNotEmpty &&
-                  (pageList.first.id == 0 ||
-                      pageList.first.text.trim() == basmalahText);
-            }
-            final isBasmalahAllowedForSurah =
-                headerStartSurahId != null &&
-                headerStartSurahId != 1 &&
-                headerStartSurahId != 9;
-
-            mushaf_view_widgets.VersesPageView.prewarmSizingCache(
-              context: context,
-              pages: pages,
-              pageIndex: idx,
-              availableWidth: availableWidth,
-              availableLinesForVerses: 15 - headerLinesFor(idx),
-              headerLines: headerLinesFor(idx),
-              isFatihaFirstPage: isFatihaFirstPage,
-              isBaqarahFirstPage: isBaqarahFirstPage,
-              isBasmalahAllowedForSurah: isBasmalahAllowedForSurah,
-              pageHasBasmalahAtTop: pageHasBasmalahAtTop,
-            );
-          }
-        } catch (_) {}
-      });
-    }
+    // Removed prewarm sizing cache; mapping-based renderer handles layout directly.
 
     return Scaffold(
       body: Container(
@@ -473,18 +414,20 @@ class _MushafScreenState extends State<MushafScreen> {
                 pageHeight: availableHeight,
                 pageStartSurahIds: pageStartSurahIds,
                 allSurahs: widget.allSurahs,
+                lineMappingByPageTokens: _lineMapping,
               ),
             ),
             SizedBox(
               height: bottomBarHeight,
               child: Center(
                 child: Container(
-                  width: double.infinity,
-                  // add a small bottom margin to lift the bar slightly
-                  margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                  width: 200,
+                  // reduce bottom margin so it doesn't eat into content height
+                  margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
                   height: 36,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
                     color: Theme.of(
                       context,
                     ).colorScheme.primary.withOpacity(0.08),
