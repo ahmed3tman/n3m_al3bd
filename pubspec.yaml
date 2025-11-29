@@ -37,7 +37,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   equatable: ^2.0.7
-  
+
   # Prayer times and location
   adhan: ^2.0.0
   geolocator: ^11.0.0
@@ -98,6 +98,9 @@ flutter:
         - asset: assets/fonts/general.ttf
         - asset: assets/fonts/generalBold.ttf
           weight: 700
+    - family: NeoSansArabic
+      fonts:
+        - asset: assets/fonts/Neo_Sans_Medium.ttf
     - family: Verses
       fonts:
         - asset: assets/fonts/verses.ttf

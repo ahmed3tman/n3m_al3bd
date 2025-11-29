@@ -27,15 +27,20 @@ class VerseLayoutData {
 class VerseLayoutCache {
   static final Map<String, VerseLayoutData> _cache = {};
 
-  static String _key(int pageIndex, double width) =>
-      '${pageIndex}_${width.truncate()}';
+  static String _key(int pageIndex, double width, double height) =>
+      '${pageIndex}_${width.truncate()}_${height.truncate()}';
 
-  static VerseLayoutData? get(int pageIndex, double width) {
-    return _cache[_key(pageIndex, width)];
+  static VerseLayoutData? get(int pageIndex, double width, double height) {
+    return _cache[_key(pageIndex, width, height)];
   }
 
-  static void set(int pageIndex, double width, VerseLayoutData data) {
-    _cache[_key(pageIndex, width)] = data;
+  static void set(
+    int pageIndex,
+    double width,
+    double height,
+    VerseLayoutData data,
+  ) {
+    _cache[_key(pageIndex, width, height)] = data;
   }
 
   static void clear() {

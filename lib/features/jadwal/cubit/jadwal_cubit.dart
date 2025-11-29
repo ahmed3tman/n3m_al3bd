@@ -182,8 +182,27 @@ class JadwalCubit extends Cubit<JadwalState> {
     if (state.currentDay == null) return;
 
     final updatedTasks = state.currentDay!.tasks.map((task) {
-      if (task.id == taskId && !task.isLocked) {
+      if (task.id == taskId && !task.isLocked && task.isPrayer) {
         return task.copyWith(isCompleted: !task.isCompleted);
+      }
+      return task;
+    }).toList();
+
+    final updatedDay = state.currentDay!.copyWith(tasks: updatedTasks);
+
+    emit(state.copyWith(currentDay: updatedDay));
+
+    // Save to storage
+    await _storageService.saveCurrentDay(updatedDay);
+  }
+
+  /// Update Wird amount
+  Future<void> updateWirdAmount(int amount) async {
+    if (state.currentDay == null) return;
+
+    final updatedTasks = state.currentDay!.tasks.map((task) {
+      if (!task.isPrayer) {
+        return task.copyWith(wirdAmount: amount, isCompleted: amount > 0);
       }
       return task;
     }).toList();

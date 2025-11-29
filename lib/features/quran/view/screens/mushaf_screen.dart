@@ -311,7 +311,7 @@ class _MushafScreenState extends State<MushafScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.only(
-                top: 43,
+                top: 35,
                 left: 4,
                 right: 4,
                 bottom: 4,
@@ -390,7 +390,7 @@ class _MushafScreenState extends State<MushafScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 2),
             // PageView for paginated verses (pages are built across the whole mushaf)
             Expanded(
               child: LayoutBuilder(
@@ -414,6 +414,7 @@ class _MushafScreenState extends State<MushafScreen> {
                 },
               ),
             ),
+            const SizedBox(height: 10),
             Center(
               child: Container(
                 width: 200,

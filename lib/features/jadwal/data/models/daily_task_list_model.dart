@@ -12,9 +12,23 @@ class DailyTaskList {
     this.prayerTimes,
   });
 
-  int get completedCount => tasks.where((t) => t.isCompleted).length;
+  int get completedCount =>
+      tasks.where((t) => t.isPrayer && t.isCompleted).length;
 
-  int get totalCount => tasks.length;
+  int get totalCount => tasks.where((t) => t.isPrayer).length;
+
+  int get wirdScore {
+    final wirdTask = tasks.firstWhere(
+      (t) => !t.isPrayer,
+      orElse: () => DailyTask(
+        id: 'temp',
+        type: TaskType.wird,
+        isLocked: false,
+        wirdAmount: 0,
+      ),
+    );
+    return wirdTask.wirdAmount;
+  }
 
   DayColor get color => DayColor.calculate(completedCount, totalCount);
 

@@ -4,6 +4,7 @@ import 'package:jalees/core/share/widgets/gradient_background.dart';
 import '../../cubit/jadwal_cubit.dart';
 import '../../cubit/jadwal_state.dart';
 import '../../data/models/prayer_times_model.dart';
+
 import '../widgets/task_item_widget.dart';
 import '../widgets/prayer_times_widget.dart';
 import '../widgets/day_color_indicator.dart';
@@ -119,7 +120,13 @@ class _JadwaliScreenState extends State<JadwaliScreen> {
                             .map(
                               (task) => TaskItemWidget(
                                 task: task,
-                                onToggle: () => _cubit.toggleTask(task.id),
+                                onToggle: () {
+                                  if (task.isPrayer) {
+                                    _cubit.toggleTask(task.id);
+                                  } else {
+                                    _showWirdDialog(context, task.wirdAmount);
+                                  }
+                                },
                               ),
                             )
                             .toList(),
@@ -180,87 +187,316 @@ class _JadwaliScreenState extends State<JadwaliScreen> {
     final theme = Theme.of(context);
     final currentDay = state.currentDay!;
 
+    // Calculate progress
+    // Base: 5 prayers = 100%
+    // Wird: Each page adds 1% (or user defined logic, here assuming 1 page = 1%)
+    // But user said "1005%" if read page. Maybe they meant 100% + 5%?
+    // Let's assume 1 page = 1% for now to be safe, or maybe 5% per page?
+    // User said "1005 مثلا اذا قرأ صفحة". 1005 seems like a typo for 105 or 100.5.
+    // Let's assume 1 page = 5% extra.
+
+    final prayerProgress =
+        currentDay.completedCount / currentDay.totalCount; // 0.0 to 1.0
+    final wirdProgress = currentDay.wirdScore * 0.05; // 5% per page
+    final totalProgress = prayerProgress + wirdProgress;
+    final percentage = (totalProgress * 100).toInt();
+
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            theme.colorScheme.primaryContainer.withOpacity(0.3),
-            theme.colorScheme.primaryContainer.withOpacity(0.1),
-          ],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.2),
-          width: 1,
-        ),
+        color: theme.cardColor.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            // Decorative background elements
+            Positioned(
+              top: -30,
+              right: -30,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -40,
+              left: -20,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondary.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'اليوم',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.textTheme.bodyMedium?.color?.withOpacity(
-                        0.6,
+                  // Quranic Verse
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 24),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: theme.colorScheme.primary.withOpacity(0.1),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.shadowColor.withOpacity(0.03),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'مَا يَلْفِظُ مِن قَوْلٍ إِلَّا لَدَيْهِ رَقِيبٌ عَتِيدٌ',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            fontFamily: 'UthmanicHafs',
+                            fontSize: 18,
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                            height: 1.6,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _formatDate(currentDay.date),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'اليوم',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                          DayColorIndicator(
+                            color: currentDay.color,
+                            completedCount: currentDay.completedCount,
+                            totalCount: currentDay.totalCount,
+                            isCompact: true,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          _formatDate(currentDay.date),
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            height: 1.2,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Progress Bar
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'التقدم اليومي',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: theme.textTheme.bodyMedium?.color
+                                  ?.withOpacity(0.7),
+                            ),
+                          ),
+                          Text(
+                            '$percentage%',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: _getProgressColor(currentDay.color),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: LinearProgressIndicator(
+                          value: totalProgress > 1.0 ? 1.0 : totalProgress,
+                          minHeight: 12,
+                          backgroundColor: theme.colorScheme.surfaceVariant
+                              .withOpacity(0.3),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            _getProgressColor(currentDay.color),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              DayColorIndicator(
-                color: currentDay.color,
-                completedCount: currentDay.completedCount,
-                totalCount: currentDay.totalCount,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Progress Bar
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'التقدم',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
-                ),
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: LinearProgressIndicator(
-                  value: currentDay.completedCount / currentDay.totalCount,
-                  minHeight: 8,
-                  backgroundColor: theme.colorScheme.surfaceVariant.withOpacity(
-                    0.3,
-                  ),
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    _getProgressColor(currentDay.color),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  void _showWirdDialog(BuildContext context, int currentAmount) {
+    showDialog(
+      context: context,
+      builder: (context) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: AlertDialog(
+          title: const Text('تسجيل الورد اليومي'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildWirdLevel(
+                    context,
+                    'المستوى 1 – البدايات الصغيرة',
+                    [1, 2, 3, 4, 5],
+                    currentAmount,
+                    isPages: true,
+                  ),
+                  const Divider(),
+                  _buildWirdLevel(
+                    context,
+                    'المستوى 2 – دون ربع جزء',
+                    [6, 8, 10],
+                    currentAmount,
+                    isPages: true,
+                  ),
+                  const Divider(),
+                  _buildWirdLevel(
+                    context,
+                    'المستوى 3 – ربع جزء وما فوق',
+                    [12, 15, 20],
+                    currentAmount,
+                    isPages: true,
+                  ),
+                  const Divider(),
+                  _buildWirdLevel(
+                    context,
+                    'المستوى 4 – جزء كامل',
+                    [1, 2, 3], // 1, 2, 3 Juz
+                    currentAmount,
+                    isPages: false, // These are Juz
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _cubit.updateWirdAmount(0); // Reset
+                Navigator.pop(context);
+              },
+              child: const Text('إلغاء الورد'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('إغلاق'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWirdLevel(
+    BuildContext context,
+    String title,
+    List<int> amounts,
+    int currentAmount, {
+    required bool isPages,
+  }) {
+    // Helper to convert Juz to Pages for comparison/storage if needed
+    // Assuming 1 Juz = 20 pages for storage logic if we store everything as pages
+    // Or we store exactly what user selected.
+    // The model stores 'wirdAmount'. Let's assume we store PAGES.
+    // So if user selects 1 Juz, we store 20 pages.
+    // 2 Juz = 40 pages, 3 Juz = 60 pages.
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: amounts.map((amount) {
+            final pageAmount = isPages ? amount : amount * 20;
+            final label = isPages ? '$amount صفحة' : '$amount جزء';
+            final isSelected = currentAmount == pageAmount;
+
+            return ChoiceChip(
+              label: Text(label),
+              selected: isSelected,
+              onSelected: (selected) {
+                if (selected) {
+                  _cubit.updateWirdAmount(pageAmount);
+                  Navigator.pop(context);
+                }
+              },
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 

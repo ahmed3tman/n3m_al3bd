@@ -16,6 +16,7 @@ class DailyTask {
   final bool isCompleted;
   final bool isLocked;
   final DateTime? unlockTime;
+  final int wirdAmount; // Number of pages read
 
   const DailyTask({
     required this.id,
@@ -23,6 +24,7 @@ class DailyTask {
     this.isCompleted = false,
     this.isLocked = true,
     this.unlockTime,
+    this.wirdAmount = 0,
   });
 
   String get nameAr => type.nameAr;
@@ -35,6 +37,7 @@ class DailyTask {
     bool? isCompleted,
     bool? isLocked,
     DateTime? unlockTime,
+    int? wirdAmount,
   }) {
     return DailyTask(
       id: id ?? this.id,
@@ -42,6 +45,7 @@ class DailyTask {
       isCompleted: isCompleted ?? this.isCompleted,
       isLocked: isLocked ?? this.isLocked,
       unlockTime: unlockTime ?? this.unlockTime,
+      wirdAmount: wirdAmount ?? this.wirdAmount,
     );
   }
 
@@ -52,6 +56,7 @@ class DailyTask {
       'isCompleted': isCompleted,
       'isLocked': isLocked,
       'unlockTime': unlockTime?.toIso8601String(),
+      'wirdAmount': wirdAmount,
     };
   }
 
@@ -64,6 +69,7 @@ class DailyTask {
       unlockTime: map['unlockTime'] != null
           ? DateTime.parse(map['unlockTime'] as String)
           : null,
+      wirdAmount: map['wirdAmount'] as int? ?? 0,
     );
   }
 }

@@ -32,6 +32,7 @@ class MushafPage extends StatelessWidget {
     VerseLayoutData? layoutData = VerseLayoutCache.get(
       pageIndex,
       availableWidth,
+      availablePageHeight,
     );
 
     // 2. If not cached, compute and cache it (Synchronous on UI thread)
@@ -48,7 +49,12 @@ class MushafPage extends StatelessWidget {
         pageStartSurahIds: pageStartSurahIds,
         nextPageTokens: nextPageTokens, // NEW: Pass next page tokens
       );
-      VerseLayoutCache.set(pageIndex, availableWidth, layoutData);
+      VerseLayoutCache.set(
+        pageIndex,
+        availableWidth,
+        availablePageHeight,
+        layoutData,
+      );
     }
 
     // 3. Render using layoutData

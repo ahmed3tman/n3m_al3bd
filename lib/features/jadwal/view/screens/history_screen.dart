@@ -65,28 +65,30 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           return Directionality(
             textDirection: TextDirection.rtl,
-            child: Column(
-              children: [
+            child: CustomScrollView(
+              slivers: [
                 // Header with stats
-                _buildStatsHeader(context, state),
+                SliverToBoxAdapter(child: _buildStatsHeader(context, state)),
 
                 // History List
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(top: 8, bottom: 16),
-                    itemCount: state.history.length,
-                    itemBuilder: (context, index) {
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
                       final day = state.history[index];
-                      return HistoryDayCard(
-                        day: day,
-                        onTap: () {
-                          // Optional: Show day details dialog
-                          _showDayDetails(context, day);
-                        },
+                      return GestureDetector(
+                        onTap: () => _showDayDetails(context, day),
+                        child: HistoryDayCard(day: day),
                       );
-                    },
+                    }, childCount: state.history.length),
                   ),
                 ),
+
+                // Bottom Padding
+                const SliverToBoxAdapter(child: SizedBox(height: 24)),
               ],
             ),
           );
@@ -98,92 +100,189 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget _buildStatsHeader(BuildContext context, JadwalState state) {
     final theme = Theme.of(context);
     final totalDays = state.history.length;
-    final completeDays = state.history.where((day) => day.isComplete).length;
-    final completionRate = totalDays > 0
-        ? (completeDays / totalDays * 100).toStringAsFixed(0)
-        : '0';
+
+    // Calculate Total Wird Pages
+    final totalWirdPages = state.history.fold<int>(
+      0,
+      (sum, day) => sum + day.wirdScore,
+    );
+
+    // Calculate Average Score
+    double totalScore = 0;
+    for (final day in state.history) {
+      final prayerScore = day.totalCount > 0
+          ? day.completedCount / day.totalCount
+          : 0.0;
+      final wirdScore = day.wirdScore * 0.05; // 5% per page
+      totalScore += (prayerScore + wirdScore);
+    }
+
+    final avgScore = totalDays > 0 ? (totalScore / totalDays * 100).toInt() : 0;
 
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            theme.colorScheme.primaryContainer.withOpacity(0.3),
-            theme.colorScheme.primaryContainer.withOpacity(0.1),
-          ],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem(
-            context,
-            'إجمالي الأيام',
-            totalDays.toString(),
-            Icons.calendar_today,
-          ),
-          Container(
-            width: 1,
-            height: 40,
-            color: theme.dividerColor.withOpacity(0.3),
-          ),
-          _buildStatItem(
-            context,
-            'أيام مكتملة',
-            completeDays.toString(),
-            Icons.check_circle,
-          ),
-          Container(
-            width: 1,
-            height: 40,
-            color: theme.dividerColor.withOpacity(0.3),
-          ),
-          _buildStatItem(
-            context,
-            'نسبة الإنجاز',
-            '$completionRate%',
-            Icons.trending_up,
+        color: theme.cardColor.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
+        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            // Decorative background elements
+            Positioned(
+              top: -30,
+              right: -30,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -40,
+              left: -20,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondary.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  // Verse Section
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withOpacity(0.1),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.shadowColor.withOpacity(0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          'وَفِي ذَٰلِكَ فَلْيَتَنَافَسِ الْمُتَنَافِسُونَ',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'UthmanicHafs',
+                            fontSize: 20,
+                            height: 1.6,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Stats Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildModernStatItem(
+                        context,
+                        'إجمالي الأيام',
+                        totalDays.toString(),
+                        Icons.calendar_today_rounded,
+                        Colors.blue.shade700,
+                      ),
+                      _buildModernStatItem(
+                        context,
+                        'صفحات الورد',
+                        totalWirdPages.toString(),
+                        Icons.menu_book_rounded,
+                        Colors.green.shade600,
+                      ),
+                      _buildModernStatItem(
+                        context,
+                        'متوسط الإنجاز',
+                        '$avgScore%',
+                        Icons.trending_up_rounded,
+                        Colors.orange.shade700,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatItem(
+  Widget _buildModernStatItem(
     BuildContext context,
     String label,
     String value,
     IconData icon,
+    Color color,
   ) {
     final theme = Theme.of(context);
 
-    return Column(
-      children: [
-        Icon(icon, color: theme.colorScheme.primary, size: 24),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.primary,
+    return Expanded(
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 26),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w400,
+              color: theme.colorScheme.onSurface,
+              fontSize: 20,
+            ),
           ),
-        ),
-      ],
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 
@@ -198,8 +297,27 @@ class _HistoryScreenState extends State<HistoryScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ...day.tasks.map(
-                (task) => Padding(
+              ...day.tasks.map<Widget>((task) {
+                if (!task.isPrayer) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.menu_book_rounded,
+                          color: task.wirdAmount > 0
+                              ? Colors.green
+                              : Colors.grey,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text('${task.nameAr}: ${task.wirdAmount} صفحة'),
+                      ],
+                    ),
+                  );
+                }
+
+                return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Row(
                     children: [
@@ -212,8 +330,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       Text(task.nameAr),
                     ],
                   ),
-                ),
-              ),
+                );
+              }).toList(),
             ],
           ),
           actions: [

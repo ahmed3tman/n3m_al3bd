@@ -50,6 +50,15 @@ class VerseLayoutComputer {
     double fontSize = shouldCenterText ? 25.0 : 30.0;
     const double minFontSize = 12.0;
     const double maxFontSize = 46.0;
+
+    // NEW: Constrain font size by available height to prevent clipping
+    // We want (fontSize * 1.8) * 15 <= availablePageHeight
+    // So fontSize <= availablePageHeight / 27.0
+    final double maxFontSizeForHeight = availablePageHeight / 27.0;
+    if (fontSize > maxFontSizeForHeight) {
+      fontSize = maxFontSizeForHeight;
+    }
+
     double letterSpacing = -0.4;
     double wordSpacing = 0.0;
 

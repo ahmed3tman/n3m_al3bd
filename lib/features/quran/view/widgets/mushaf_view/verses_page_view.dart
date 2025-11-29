@@ -156,7 +156,12 @@ class _VersesPageViewState extends State<VersesPageView> {
         final tokens = widget.lineMappingByPageTokens![pageNum];
         if (tokens != null && tokens.isNotEmpty) {
           // Check cache first to avoid redundant work
-          if (VerseLayoutCache.get(pIndex, availableWidth) == null) {
+          if (VerseLayoutCache.get(
+                pIndex,
+                availableWidth,
+                availablePageHeight,
+              ) ==
+              null) {
             // NEW: Get next page tokens for cross-page header logic
             final nextPageNum = pageNum + 1;
             final nextTokens = widget.lineMappingByPageTokens![nextPageNum];
@@ -189,7 +194,12 @@ class _VersesPageViewState extends State<VersesPageView> {
                 pageStartSurahIds: widget.pageStartSurahIds,
                 nextPageTokens: nextTokens, // NEW
               );
-              VerseLayoutCache.set(pIndex, availableWidth, data);
+              VerseLayoutCache.set(
+                pIndex,
+                availableWidth,
+                availablePageHeight,
+                data,
+              );
             });
           }
         }

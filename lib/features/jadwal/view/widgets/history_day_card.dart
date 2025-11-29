@@ -4,115 +4,129 @@ import '../../data/models/prayer_times_model.dart';
 
 class HistoryDayCard extends StatelessWidget {
   final DailyTaskList day;
-  final VoidCallback? onTap;
 
-  const HistoryDayCard({super.key, required this.day, this.onTap});
+  const HistoryDayCard({super.key, required this.day});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = _getColor(day.color);
+    final isComplete = day.isComplete;
+    final prayerCount = day.completedCount;
+    final totalPrayers = day.totalCount;
+    final wirdPages = day.wirdScore;
+    final dayColor = _getColor(day.color);
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: color.withOpacity(0.3), width: 2),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-            ),
-            borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: IntrinsicHeight(
           child: Row(
             children: [
-              // Color Indicator Circle
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    '${day.completedCount}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
+              // Colored Strip Indicator
+              Container(width: 6, color: dayColor),
 
-              // Date and Info
+              // Content
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _formatDate(day.date),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header: Date and Islamic Phrase
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _formatDate(day.date),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: dayColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _getIslamicPhrase(day.color),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: dayColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${day.completedCount} من ${day.totalCount} مهام',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withOpacity(
-                          0.6,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _getStatusText(day.color),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
-              // Completion Percentage
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '${((day.completedCount / day.totalCount) * 100).toStringAsFixed(0)}%',
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
+                      const SizedBox(height: 12),
+
+                      // Stats Row (Compact)
+                      Row(
+                        children: [
+                          _buildCompactStat(
+                            context,
+                            Icons.mosque_outlined,
+                            '$prayerCount صلوات',
+                            theme.colorScheme.primary,
+                          ),
+                          const SizedBox(width: 16),
+                          _buildCompactStat(
+                            context,
+                            Icons.menu_book_rounded,
+                            wirdPages > 0 ? '$wirdPages صفحة' : 'لا يوجد ورد',
+                            theme.colorScheme.secondary,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  if (day.isComplete)
-                    Icon(Icons.check_circle, color: color, size: 20),
-                ],
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCompactStat(
+    BuildContext context,
+    IconData icon,
+    String label,
+    Color color,
+  ) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: color.withOpacity(0.7)),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 12,
+            color: Theme.of(
+              context,
+            ).textTheme.bodySmall?.color?.withOpacity(0.8),
+          ),
+        ),
+      ],
     );
   }
 
@@ -127,18 +141,28 @@ class HistoryDayCard extends StatelessWidget {
     }
   }
 
-  String _getStatusText(DayColor dayColor) {
+  String _getIslamicPhrase(DayColor dayColor) {
     switch (dayColor) {
       case DayColor.green:
-        return 'ممتاز - جميع المهام مكتملة';
+        return 'اللهم ثبّتني على طاعتك';
       case DayColor.yellow:
-        return 'جيد - بعض المهام ناقصة';
+        return 'اللهم أعني على التقوى';
       case DayColor.red:
-        return 'يحتاج تحسين';
+        return 'اللهم قوِّ عزيمتي';
     }
   }
 
   String _formatDate(DateTime date) {
+    const weekdays = [
+      'الاثنين',
+      'الثلاثاء',
+      'الأربعاء',
+      'الخميس',
+      'الجمعة',
+      'السبت',
+      'الأحد',
+    ];
+
     const months = [
       'يناير',
       'فبراير',
@@ -152,16 +176,6 @@ class HistoryDayCard extends StatelessWidget {
       'أكتوبر',
       'نوفمبر',
       'ديسمبر',
-    ];
-
-    const weekdays = [
-      'الاثنين',
-      'الثلاثاء',
-      'الأربعاء',
-      'الخميس',
-      'الجمعة',
-      'السبت',
-      'الأحد',
     ];
 
     final weekday = weekdays[date.weekday - 1];

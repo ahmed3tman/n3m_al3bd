@@ -17,63 +17,75 @@ class PrayerTimesWidget extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.dividerColor.withOpacity(0.1),
-          width: 1,
-        ),
+        color: theme.cardColor.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.access_time,
-                color: theme.colorScheme.primary,
-                size: 20,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.access_time_filled_rounded,
+                  color: theme.colorScheme.primary,
+                  size: 20,
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Text(
                 'مواقيت الصلاة',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildPrayerTimeRow(
             context,
             'الفجر',
             prayerTimes.fajr,
             isNext: nextPrayer == 'fajr',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           _buildPrayerTimeRow(
             context,
             'الظهر',
             prayerTimes.dhuhr,
             isNext: nextPrayer == 'dhuhr',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           _buildPrayerTimeRow(
             context,
             'العصر',
             prayerTimes.asr,
             isNext: nextPrayer == 'asr',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           _buildPrayerTimeRow(
             context,
             'المغرب',
             prayerTimes.maghrib,
             isNext: nextPrayer == 'maghrib',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           _buildPrayerTimeRow(
             context,
             'العشاء',
@@ -94,12 +106,18 @@ class PrayerTimesWidget extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: isNext
-            ? theme.colorScheme.primaryContainer.withOpacity(0.3)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+            ? theme.colorScheme.primaryContainer.withOpacity(0.2)
+            : theme.colorScheme.surface.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(16),
+        border: isNext
+            ? Border.all(
+                color: theme.colorScheme.primary.withOpacity(0.3),
+                width: 1.5,
+              )
+            : Border.all(color: theme.dividerColor.withOpacity(0.05)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,7 +128,7 @@ class PrayerTimesWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsetsDirectional.only(end: 8),
                   child: Icon(
-                    Icons.arrow_back,
+                    Icons.arrow_back_ios_new_rounded,
                     color: theme.colorScheme.primary,
                     size: 16,
                   ),
@@ -118,7 +136,7 @@ class PrayerTimesWidget extends StatelessWidget {
               Text(
                 name,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: isNext ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: isNext ? FontWeight.w400 : FontWeight.normal,
                   color: isNext ? theme.colorScheme.primary : null,
                 ),
               ),
@@ -127,8 +145,7 @@ class PrayerTimesWidget extends StatelessWidget {
           Text(
             _formatTime(time),
             style: theme.textTheme.bodyLarge?.copyWith(
-              fontFamily: 'GeneralFont',
-              fontWeight: isNext ? FontWeight.bold : FontWeight.normal,
+              fontWeight: isNext ? FontWeight.w400 : FontWeight.normal,
               color: isNext ? theme.colorScheme.primary : null,
             ),
           ),
