@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/features/quran/model/mushaf_model.dart';
+import 'package:n3m_al3bd/features/quran/model/mushaf_model.dart';
 
 /// Unified Mushaf card file combining existing MushafCard and NewMushafCard
 /// - MushafCard: rich visual with background image, gradient overlay, centered Arabic title, and delete button

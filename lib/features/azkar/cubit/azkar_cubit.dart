@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jalees/features/azkar/cubit/azkar_state.dart';
-import 'package:jalees/features/azkar/model/azkar_model.dart';
+import 'package:n3m_al3bd/features/azkar/cubit/azkar_state.dart';
+import 'package:n3m_al3bd/features/azkar/model/azkar_model.dart';
 
 class AzkarCubit extends Cubit<AzkarState> {
   AzkarCubit() : super(AzkarInitial());

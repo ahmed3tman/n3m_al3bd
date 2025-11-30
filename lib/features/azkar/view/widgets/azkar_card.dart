@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jalees/features/azkar/cubit/azkar_cubit.dart';
-import 'package:jalees/features/azkar/model/azkar_model.dart';
+import 'package:n3m_al3bd/features/azkar/cubit/azkar_cubit.dart';
+import 'package:n3m_al3bd/features/azkar/model/azkar_model.dart';
 import '../../../../core/theme/app_fonts.dart';
 
 class AzkarCard extends StatefulWidget {

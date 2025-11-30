@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/core/theme/app_theme.dart';
-import 'package:jalees/features/nav/view/screens/nav_screen.dart';
-import 'package:jalees/features/quran/view/screens/quran_screen.dart';
+import 'package:n3m_al3bd/core/theme/app_theme.dart';
+import 'package:n3m_al3bd/features/nav/view/screens/nav_screen.dart';
+import 'package:n3m_al3bd/features/quran/view/screens/quran_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

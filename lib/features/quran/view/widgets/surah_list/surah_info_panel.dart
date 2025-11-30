@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/core/theme/app_fonts.dart';
+import 'package:n3m_al3bd/core/theme/app_fonts.dart';
 
 class SurahInfoPanel extends StatelessWidget {
   final String versesCount;

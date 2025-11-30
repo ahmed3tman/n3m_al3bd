@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:jalees/core/share/widgets/gradient_background.dart';
-import 'package:jalees/features/quran/view/screens/quran_screen.dart';
-import 'package:jalees/features/azkar/view/screens/azkar_screen.dart';
+import 'package:n3m_al3bd/core/share/widgets/gradient_background.dart';
+import 'package:n3m_al3bd/features/quran/view/screens/quran_screen.dart';
+import 'package:n3m_al3bd/features/azkar/view/screens/azkar_screen.dart';
 import '../../../salaty/view/screens/salaty_screen.dart';
-import 'package:jalees/features/quran/data/page_mapping_repository.dart';
-import 'package:jalees/features/quran/data/line_mapping_repository.dart';
+import 'package:n3m_al3bd/features/quran/data/page_mapping_repository.dart';
+import 'package:n3m_al3bd/features/quran/data/line_mapping_repository.dart';
 
 class Nav extends StatefulWidget {
   const Nav({super.key});

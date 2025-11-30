@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/features/quran/model/quran_model.dart';
+import 'package:n3m_al3bd/features/quran/model/quran_model.dart';
 
-import 'package:jalees/features/quran/view/widgets/mushaf_view/mushaf_page.dart';
-import 'package:jalees/features/quran/view/widgets/mushaf_view/verse_layout_cache.dart';
-import 'package:jalees/features/quran/view/widgets/mushaf_view/verse_layout_computer.dart';
+import 'package:n3m_al3bd/features/quran/view/widgets/mushaf_view/mushaf_page.dart';
+import 'package:n3m_al3bd/features/quran/view/widgets/mushaf_view/verse_layout_cache.dart';
+import 'package:n3m_al3bd/features/quran/view/widgets/mushaf_view/verse_layout_computer.dart';
 import 'dart:async';
 
 /// Page view that shows pages of verses. Expects pages as a list of verse lists.

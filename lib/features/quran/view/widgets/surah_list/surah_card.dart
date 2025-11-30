@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/features/quran/model/quran_model.dart';
-import 'package:jalees/features/quran/view/screens/surah_screen.dart';
-import 'package:jalees/core/theme/app_fonts.dart';
+import 'package:n3m_al3bd/features/quran/model/quran_model.dart';
+import 'package:n3m_al3bd/features/quran/view/screens/surah_screen.dart';
+import 'package:n3m_al3bd/core/theme/app_fonts.dart';
 
 // helper: convert ASCII digits to Arabic-Indic digits (٠١٢٣٤٥٦٧٨٩)
 String _toArabicDigits(Object value) {

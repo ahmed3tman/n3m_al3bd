@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jalees/core/share/widgets/custom_search_bar.dart';
-import 'package:jalees/core/share/widgets/custom_text_field.dart';
-import 'package:jalees/core/share/widgets/gradient_background.dart';
-import 'package:jalees/features/quran/view/widgets/mushaf/widgets.dart'
+import 'package:n3m_al3bd/core/share/widgets/custom_search_bar.dart';
+import 'package:n3m_al3bd/core/share/widgets/custom_text_field.dart';
+import 'package:n3m_al3bd/core/share/widgets/gradient_background.dart';
+import 'package:n3m_al3bd/features/quran/view/widgets/mushaf/widgets.dart'
     as mushaf_widgets;
-import 'package:jalees/features/quran/view/widgets/surah_list/widgets.dart'
+import 'package:n3m_al3bd/features/quran/view/widgets/surah_list/widgets.dart'
     as surah_widgets;
 import '../../cubit/quran_cubit.dart';
 import '../../cubit/quran_state.dart';

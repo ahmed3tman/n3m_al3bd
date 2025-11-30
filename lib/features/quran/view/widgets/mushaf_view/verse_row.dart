@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/features/quran/model/quran_model.dart';
-import 'package:jalees/core/utils/quran_verse_numbers.dart';
-import 'package:jalees/core/theme/app_fonts.dart';
+import 'package:n3m_al3bd/features/quran/model/quran_model.dart';
+import 'package:n3m_al3bd/core/utils/quran_verse_numbers.dart';
+import 'package:n3m_al3bd/core/theme/app_fonts.dart';
 
 /// Single verse row using RichText and the decorated verse number.
 class VerseRow extends StatelessWidget {

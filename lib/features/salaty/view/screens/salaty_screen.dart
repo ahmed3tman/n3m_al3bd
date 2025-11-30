@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jalees/core/share/widgets/gradient_background.dart';
+import 'package:n3m_al3bd/core/share/widgets/gradient_background.dart';
 import '../../cubit/salaty_cubit.dart';
 import '../../cubit/salaty_state.dart';
 import '../../data/models/prayer_times_model.dart';
@@ -44,20 +44,35 @@ class _SalatyScreenState extends State<SalatyScreen> {
           title: Image.asset('assets/logo.PNG', height: 70),
           centerTitle: true,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.history),
-              tooltip: 'السجل',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (routeContext) => BlocProvider.value(
-                      value: _cubit,
-                      child: const HistoryScreen(),
-                    ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.2),
                   ),
-                );
-              },
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.history),
+                  color: Theme.of(context).colorScheme.primary,
+                  tooltip: 'السجل',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (routeContext) => BlocProvider.value(
+                          value: _cubit,
+                          child: const HistoryScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ],
         ),

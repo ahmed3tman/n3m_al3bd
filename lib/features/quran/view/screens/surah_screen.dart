@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/core/utils/quran_verse_numbers.dart';
+import 'package:n3m_al3bd/core/utils/quran_verse_numbers.dart';
 import '../../../../core/theme/app_fonts.dart';
 import '../../model/quran_model.dart';
-import 'package:jalees/features/quran/view/widgets/surah_list/widgets.dart';
+import 'package:n3m_al3bd/features/quran/view/widgets/surah_list/widgets.dart';
 
 class AyatScreen extends StatelessWidget {
   final QuranSurah surah;

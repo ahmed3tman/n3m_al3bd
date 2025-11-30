@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/features/quran/model/quran_model.dart';
-import 'package:jalees/core/theme/app_fonts.dart';
+import 'package:n3m_al3bd/features/quran/model/quran_model.dart';
+import 'package:n3m_al3bd/core/theme/app_fonts.dart';
 
 /// Header that shows the surah name and optional basmalah.
 class SuraHeader extends StatelessWidget {

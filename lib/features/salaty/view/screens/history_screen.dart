@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jalees/core/share/widgets/gradient_background.dart';
+import 'package:n3m_al3bd/core/share/widgets/gradient_background.dart';
 import '../../cubit/salaty_cubit.dart';
 import '../../cubit/salaty_state.dart';
 import '../widgets/history_day_card.dart';

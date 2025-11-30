@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/core/theme/app_fonts.dart';
-import 'package:jalees/core/utils/quran_verse_numbers.dart';
-import 'package:jalees/features/quran/data/page_mapping_repository.dart';
-import 'package:jalees/features/quran/data/line_mapping_repository.dart';
+import 'package:n3m_al3bd/core/theme/app_fonts.dart';
+import 'package:n3m_al3bd/core/utils/quran_verse_numbers.dart';
+import 'package:n3m_al3bd/features/quran/data/page_mapping_repository.dart';
+import 'package:n3m_al3bd/features/quran/data/line_mapping_repository.dart';
 import '../../model/quran_model.dart';
 import '../../model/mushaf_model.dart';
-import 'package:jalees/features/quran/view/widgets/mushaf_view/widgets.dart'
+import 'package:n3m_al3bd/features/quran/view/widgets/mushaf_view/widgets.dart'
     as mushaf_view_widgets;
 
 class MushafScreen extends StatefulWidget {

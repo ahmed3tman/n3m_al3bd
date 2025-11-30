@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jalees/core/theme/app_fonts.dart';
-import 'package:jalees/core/utils/quran_verse_numbers.dart';
-import 'package:jalees/features/quran/model/quran_model.dart';
-import 'package:jalees/features/quran/view/widgets/mushaf_view/verse_layout_cache.dart';
+import 'package:n3m_al3bd/core/theme/app_fonts.dart';
+import 'package:n3m_al3bd/core/utils/quran_verse_numbers.dart';
+import 'package:n3m_al3bd/features/quran/model/quran_model.dart';
+import 'package:n3m_al3bd/features/quran/view/widgets/mushaf_view/verse_layout_cache.dart';
 
 /// Helper class to compute the layout (font size, spacing) for a Mushaf page.
 /// This logic is expensive and should be cached.

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jalees/my_app.dart';
-import 'package:jalees/features/quran/data/page_mapping_repository.dart';
+import 'package:n3m_al3bd/my_app.dart';
+import 'package:n3m_al3bd/features/quran/data/page_mapping_repository.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {

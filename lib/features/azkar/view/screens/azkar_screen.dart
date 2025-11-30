@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jalees/core/share/widgets/custom_search_bar.dart';
-import 'package:jalees/core/share/widgets/gradient_background.dart';
-import 'package:jalees/features/azkar/cubit/azkar_cubit.dart';
-import 'package:jalees/features/azkar/cubit/azkar_state.dart';
-import 'package:jalees/features/azkar/view/widgets/azkar_card.dart';
+import 'package:n3m_al3bd/core/share/widgets/custom_search_bar.dart';
+import 'package:n3m_al3bd/core/share/widgets/gradient_background.dart';
+import 'package:n3m_al3bd/features/azkar/cubit/azkar_cubit.dart';
+import 'package:n3m_al3bd/features/azkar/cubit/azkar_state.dart';
+import 'package:n3m_al3bd/features/azkar/view/widgets/azkar_card.dart';
 
 class AzkarScreen extends StatefulWidget {
   const AzkarScreen({super.key});
