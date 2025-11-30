@@ -146,7 +146,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.05),
+                  color: theme.colorScheme.primary.withOpacity(0.2),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -158,7 +158,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.secondary.withOpacity(0.05),
+                  color: theme.colorScheme.secondary.withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
               ),

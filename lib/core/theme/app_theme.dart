@@ -59,7 +59,7 @@ class AppTheme {
       toolbarHeight: 60,
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xBF073A47), // اللون الداكن الأساسي مع شفافية 75%
+      backgroundColor: Color(0xE6073A47), // اللون الداكن الأساسي مع شفافية 90%
       selectedItemColor: Colors.white,
       unselectedItemColor: Color(0xBFFFFFFF), // أبيض مع شفافية
       type: BottomNavigationBarType.fixed,

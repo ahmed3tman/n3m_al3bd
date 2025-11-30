@@ -32,12 +32,12 @@ class HistoryDayCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         child: IntrinsicHeight(
           child: Row(
             children: [
               // Colored Strip Indicator
-              Container(width: 6, color: dayColor),
+              Container(width: 15, color: dayColor),
 
               // Content
               Expanded(
@@ -54,7 +54,7 @@ class HistoryDayCard extends StatelessWidget {
                             _formatDate(day.date),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 20,
                             ),
                           ),
                           Container(

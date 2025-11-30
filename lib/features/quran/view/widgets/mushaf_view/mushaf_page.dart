@@ -157,20 +157,20 @@ class _SurahHeaderDecorated extends StatelessWidget {
       ),
     );
     final display = (s.id == -1) ? '' : s.name;
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 2),
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color.fromARGB(255, 255, 204, 165), Color(0xFFeed8b3)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF8a5a34), width: 1),
+        border: Border.all(
+          color: theme.colorScheme.primary.withOpacity(0.3),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.brown.withOpacity(0.22),
+            color: theme.shadowColor.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -179,7 +179,10 @@ class _SurahHeaderDecorated extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
-          Text('❁', style: TextStyle(fontSize: 20, color: AppFonts.brightGold)),
+          Text(
+            '❁',
+            style: TextStyle(fontSize: 20, color: theme.colorScheme.secondary),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Center(
@@ -190,13 +193,16 @@ class _SurahHeaderDecorated extends StatelessWidget {
                 style: AppFonts.suraNameStyle(
                   fontSize: 21,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF8a5a34),
+                  color: theme.colorScheme.primary,
                 ),
               ),
             ),
           ),
           const SizedBox(width: 8),
-          Text('❁', style: TextStyle(fontSize: 20, color: AppFonts.brightGold)),
+          Text(
+            '❁',
+            style: TextStyle(fontSize: 20, color: theme.colorScheme.secondary),
+          ),
         ],
       ),
     );

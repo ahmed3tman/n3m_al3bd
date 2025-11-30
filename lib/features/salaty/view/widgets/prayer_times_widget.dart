@@ -123,25 +123,30 @@ class PrayerTimesWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              if (isNext)
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(end: 8),
-                  child: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: theme.colorScheme.primary,
-                    size: 16,
+          Expanded(
+            child: Row(
+              children: [
+                if (isNext)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 8),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: theme.colorScheme.primary,
+                      size: 16,
+                    ),
+                  ),
+                Flexible(
+                  child: Text(
+                    name,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: isNext ? FontWeight.w400 : FontWeight.normal,
+                      color: isNext ? theme.colorScheme.primary : null,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              Text(
-                name,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: isNext ? FontWeight.w400 : FontWeight.normal,
-                  color: isNext ? theme.colorScheme.primary : null,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           Text(
             _formatTime(time),

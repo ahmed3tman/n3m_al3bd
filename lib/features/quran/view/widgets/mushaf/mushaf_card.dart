@@ -67,6 +67,8 @@ class MushafCard extends StatelessWidget {
                           Text(
                             mushaf.name,
                             textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
                                   fontFamily: 'UthmanicHafs',
@@ -100,17 +102,17 @@ class MushafCard extends StatelessWidget {
                     child: GestureDetector(
                       onTap: onDelete,
                       child: Container(
-                        width: 29,
-                        height: 30,
+                        width: 32,
+                        height: 32,
                         alignment: Alignment.center,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.black54,
-                          borderRadius: BorderRadius.circular(8),
+                          shape: BoxShape.circle,
                         ),
                         child: const Icon(
                           Icons.delete_outline,
                           color: Colors.white,
-                          size: 20,
+                          size: 18,
                         ),
                       ),
                     ),

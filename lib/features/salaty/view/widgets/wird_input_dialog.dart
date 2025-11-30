@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../core/share/widgets/custom_text_field.dart';
 import '../../../../core/utils/number_converter.dart';
 
 class WirdInputDialog extends StatefulWidget {
@@ -70,53 +71,15 @@ class _WirdInputDialogState extends State<WirdInputDialog> {
             children: [
               const SizedBox(height: 16),
               // Page Input
-              TextField(
+              CustomTextField(
                 controller: _pageController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w400, // Regular weight
-                  color: onSurfaceColor,
-                  fontFamily: 'GeneralFont',
-                ),
-                decoration: InputDecoration(
-                  labelText: 'عدد الصفحات',
-                  labelStyle: TextStyle(
-                    color: primaryColor.withOpacity(0.8),
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'GeneralFont',
-                  ),
-                  hintText: 'اكتب عدد الصفحات',
-                  hintStyle: TextStyle(
-                    fontSize: 12,
-                    color: onSurfaceColor.withOpacity(0.4),
-                    fontWeight: FontWeight.w300, // Light weight
-                    fontFamily: 'GeneralFont',
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: primaryColor.withOpacity(0.3),
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: primaryColor.withOpacity(0.3),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: primaryColor, width: 1.5),
-                  ),
-                  prefixIcon: Icon(
-                    Icons.menu_book,
-                    color: primaryColor.withOpacity(0.7),
-                  ),
+                labelText: 'عدد الصفحات',
+                hintText: 'اكتب عدد الصفحات',
+                prefixIcon: Icon(
+                  Icons.menu_book,
+                  color: theme.colorScheme.primary.withOpacity(0.7),
                 ),
                 onChanged: (value) {
                   // Reset Juz selection if user manually types

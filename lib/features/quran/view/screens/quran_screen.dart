@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jalees/core/share/widgets/custom_search_bar.dart';
+import 'package:jalees/core/share/widgets/custom_text_field.dart';
 import 'package:jalees/core/share/widgets/gradient_background.dart';
 import 'package:jalees/features/quran/view/widgets/mushaf/widgets.dart'
     as mushaf_widgets;
@@ -38,24 +39,61 @@ class _QuranScreenState extends State<QuranScreen> {
     final controller = TextEditingController();
     final name = await showDialog<String>(
       context: context,
-      builder: (c) => AlertDialog(
-        title: const Text('إضافة ختمة'),
-        content: TextField(
-          controller: controller,
+      builder: (c) {
+        final theme = Theme.of(c);
+        return Directionality(
           textDirection: TextDirection.rtl,
-          decoration: const InputDecoration(hintText: 'اكتب اسم للخاتمه'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(c),
-            child: const Text('إلغاء'),
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Text(
+              'إضافة ختمة',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w500, // Thinner title
+                color: theme.colorScheme.primary,
+                fontFamily: 'GeneralFont',
+              ),
+              textAlign: TextAlign.center,
+            ),
+            content: CustomTextField(
+              controller: controller,
+              hintText: 'اكتب اسم للخاتمه',
+              textDirection: TextDirection.rtl,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(c),
+                child: Text(
+                  'إلغاء',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500, // Thinner
+                    fontFamily: 'GeneralFont',
+                    color: Colors.red.shade400,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(c, controller.text),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF81B29A), // Sage green
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'إنشاء',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500, // Thinner
+                    fontFamily: 'GeneralFont',
+                  ),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(c, controller.text),
-            child: const Text('إنشاء'),
-          ),
-        ],
-      ),
+        );
+      },
     );
     if (name != null && name.trim().isNotEmpty) {
       final m = await MushafStorage.addMushaf(name.trim());
