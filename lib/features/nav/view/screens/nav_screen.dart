@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:jalees/core/share/widgets/gradient_background.dart';
 import 'package:jalees/features/quran/view/screens/quran_screen.dart';
-import 'package:jalees/features/bukhari/view/screens/bukhari_screen.dart';
 import 'package:jalees/features/azkar/view/screens/azkar_screen.dart';
-import '../../../jadwal/view/screens/jadwali_screen.dart';
+import '../../../salaty/view/screens/salaty_screen.dart';
 import 'package:jalees/features/quran/data/page_mapping_repository.dart';
 import 'package:jalees/features/quran/data/line_mapping_repository.dart';
 
@@ -21,16 +20,15 @@ class _NavState extends State<Nav> with TickerProviderStateMixin {
   bool _isBottomBarVisible = true;
 
   final List<Widget> _screens = const [
+    SalatyScreen(),
     QuranScreen(),
-    BukhariScreen(),
     AzkarScreen(),
-    JadwaliScreen(),
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.animateTo(_currentIndex);
 
     // Pre-load Quran mapping data in background
@@ -104,15 +102,13 @@ class _NavState extends State<Nav> with TickerProviderStateMixin {
                       height: 80,
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.secondary.withOpacity(0.2),
-                          width: 1,
+                          color: Colors.white.withOpacity(0.6),
+                          width: 1.5,
                         ),
                         color: Theme.of(
                           context,
                         ).colorScheme.primary.withOpacity(0.95),
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius: BorderRadius.circular(24),
                       ),
                       child: TabBar(
                         indicatorPadding: const EdgeInsets.all(6),
@@ -145,10 +141,9 @@ class _NavState extends State<Nav> with TickerProviderStateMixin {
                         ),
                         dividerColor: Colors.transparent,
                         tabs: [
-                          _buildTab('assets/icons/quran.png', 'القرآن', 0),
-                          _buildTab('assets/icons/hadeeth.png', 'أحاديث', 1),
-                          _buildTab('assets/icons/azkar.png', 'أذكار', 2),
-                          _buildTab('assets/icons/calendar.png', 'جدولي', 3),
+                          _buildTab('assets/icons/calendar.png', 'صلاتي', 0),
+                          _buildTab('assets/icons/quran.png', 'وِردي', 1),
+                          _buildTab('assets/icons/azkar.png', 'أذكاري', 2),
                         ],
                       ),
                     ),

@@ -32,22 +32,24 @@ class SurahCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       // reduce vertical margin to remove extra empty space under the card
+      // reduce vertical margin to remove extra empty space under the card
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      // increase elevation to make the card pop on darker background
-      elevation: 6,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      // Remove elevation for flat glassy look
+      elevation: 0,
+      color: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          // slightly darker gradient for the card background
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              Theme.of(context).colorScheme.surface.withOpacity(0.98),
-              Theme.of(context).colorScheme.surface.withOpacity(0.88),
-            ],
-          ),
+          color: Theme.of(context).cardColor.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: ListTile(
           // reduce vertical padding to remove empty space under content

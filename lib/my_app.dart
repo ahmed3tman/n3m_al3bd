@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
         'nav': (context) => const Nav(),
         'quran': (context) => const QuranScreen(),
       },
-      title: 'إيلاف',
+      title: 'نعم العبد',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       builder: (context, child) {

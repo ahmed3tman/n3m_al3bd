@@ -20,7 +20,8 @@ class SurahInfoPanel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

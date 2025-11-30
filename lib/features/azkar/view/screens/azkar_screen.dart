@@ -22,7 +22,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
     return BlocProvider(
       create: (context) => AzkarCubit()..getAzkar(),
       child: GradientScaffold(
-        appBar: AppBar(title: const Text('أذكار'), centerTitle: true),
+        appBar: AppBar(title: const Text('الأذكار'), centerTitle: true),
         body: Column(
           children: [
             Padding(

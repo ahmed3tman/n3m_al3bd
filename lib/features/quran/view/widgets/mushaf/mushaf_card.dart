@@ -25,13 +25,14 @@ class MushafCard extends StatelessWidget {
         onTap: onTap,
         child: Card(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: Colors.white.withOpacity(0.6), width: 1.5),
           ),
           child: SizedBox(
             width: 120,
             height: 200,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(24),
               child: Stack(
                 children: [
                   // Background image from assets
@@ -137,7 +138,8 @@ class NewMushafCard extends StatelessWidget {
         onTap: onTap,
         child: Card(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: Colors.white.withOpacity(0.6), width: 1.5),
           ),
           child: Container(
             width: 120,

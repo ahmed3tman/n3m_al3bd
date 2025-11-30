@@ -2,23 +2,26 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // ألوان مستوحاة من تدرجات شروق/غروب الشمس
-  static const Color _darkPrimary = Color(0xFF073A47); // لون داكن أساسي
-  static const Color _tealSecondary = Color(0xFF2A6668); // أزرق مخضر ثانوي
-  static const Color _neutralBrown = Color.fromRGBO(165, 142, 111, 1); // محايد بني
-  static const Color _warmAccent = Color(0xFFF07D42); // برتقالي دافئ
-  static const Color _lightBackground = Color(0xFFFDB774); // مشمشي فاتح
-  static const Color _lighterBackground = Color(
-    0xFFFEE4A6,
-  ); // مشمشي أفتح للتدرج
-  static const Color _paperWhite = Color(0xFFFFFEF7); // أبيض ورقي
+  static const Color _darkPrimary = Color(0xFF555B6E); // لون داكن أساسي
+  static const Color _tealSecondary = Color(0xFF89B0AE); // أزرق مخضر ثانوي
+  static const Color _neutralBrown = Color.fromRGBO(
+    165,
+    142,
+    111,
+    1,
+  ); // محايد بني
+  static const Color _warmAccent = Color(0xFFFFD6BA); // برتقالي دافئ
+  static const Color _lightBackground = Color(0xFFBEE3DB); // مشمشي فاتح جداً
+
+  static const Color _paperWhite = Color(0xFFFAF9F9); // أبيض ورقي
 
   // تدرج الخلفية الجميل
   static const LinearGradient backgroundGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      _lighterBackground, // أفتح في الأعلى
-      _lightBackground, // أغمق قليلاً في الأسفل
+      _lightBackground, // لون موحد
+      _lightBackground, // لون موحد
     ],
     stops: [0.0, 1.0],
   );
@@ -40,12 +43,12 @@ class AppTheme {
     ),
     scaffoldBackgroundColor: Colors.transparent, // شفاف ليظهر التدرج
     appBarTheme: const AppBarTheme(
-      backgroundColor: _darkPrimary,
-      elevation: 2,
-      shadowColor: Color(0x1A000000),
-      iconTheme: IconThemeData(color: Colors.white, size: 24),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      iconTheme: IconThemeData(color: _darkPrimary, size: 24),
       titleTextStyle: TextStyle(
-        color: Colors.white,
+        color: _darkPrimary,
         fontSize: 22,
         fontWeight: FontWeight.w700,
         fontFamily: 'GeneralFont', // خط واضح ومقروء للعناوين
@@ -68,12 +71,12 @@ class AppTheme {
       unselectedLabelStyle: TextStyle(fontFamily: 'GeneralFont'),
     ),
     cardTheme: CardThemeData(
-      color: _paperWhite,
-      elevation: 3,
+      color: _paperWhite.withOpacity(0.9), // شفافية طفيفة
+      elevation: 0, // تقليل الظل للتأثير الزجاجي
       shadowColor: const Color(0x1A000000),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200, width: 1),
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: Colors.white.withOpacity(0.6), width: 1.5),
       ),
     ),
     fontFamily: 'GeneralFont', // الخط الأساسي للتطبيق
