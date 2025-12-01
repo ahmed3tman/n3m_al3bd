@@ -310,8 +310,8 @@ class _MushafScreenState extends State<MushafScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                top: 35,
+              padding: EdgeInsets.only(
+                top: media.padding.top + 8,
                 left: 4,
                 right: 4,
                 bottom: 4,
@@ -338,7 +338,7 @@ class _MushafScreenState extends State<MushafScreen> {
                               Directionality.of(context) == TextDirection.rtl
                                   ? Icons.arrow_back_ios_new_rounded
                                   : Icons.arrow_forward_ios_rounded,
-                              size: 18,
+                              size: 24,
                               color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
@@ -350,7 +350,7 @@ class _MushafScreenState extends State<MushafScreen> {
                     child: Text(
                       widget.allSurahs[currentIndex].name,
                       style: AppFonts.suraNameStyle(
-                        fontSize: 30,
+                        fontSize: 26,
                         fontWeight: FontWeight.w700,
                       ),
                       textAlign: TextAlign.center,
@@ -371,7 +371,10 @@ class _MushafScreenState extends State<MushafScreen> {
                           });
                           final messenger = ScaffoldMessenger.of(context);
                           messenger.showSnackBar(
-                            const SnackBar(content: Text('تم حفظ العلامة')),
+                            const SnackBar(
+                              content: Center(child: Text('تم حفظ العلامة')),
+                              behavior: SnackBarBehavior.floating,
+                            ),
                           );
                         }
                       },
@@ -379,7 +382,7 @@ class _MushafScreenState extends State<MushafScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: Icon(
                           _isSaved ? Icons.bookmark : Icons.bookmark_border,
-                          size: 26,
+                          size: 30,
                           color: _isSaved
                               ? Theme.of(context).colorScheme.primary
                               : Theme.of(context).colorScheme.primary,
@@ -390,7 +393,7 @@ class _MushafScreenState extends State<MushafScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 2),
+
             // PageView for paginated verses (pages are built across the whole mushaf)
             Expanded(
               child: LayoutBuilder(
@@ -414,12 +417,12 @@ class _MushafScreenState extends State<MushafScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 10),
+
             Center(
               child: Container(
                 width: 200,
                 // reduce bottom margin so it doesn't eat into content height
-                margin: const EdgeInsets.fromLTRB(12, 0, 12, 15),
+                margin: const EdgeInsets.fromLTRB(12, 0, 12, 25),
                 height: 36,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(

@@ -45,7 +45,12 @@ class _SalatyScreenState extends State<SalatyScreen> {
           centerTitle: true,
           actions: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 8,
+                top: 8,
+                bottom: 8,
+              ),
               child: Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface.withOpacity(0.8),

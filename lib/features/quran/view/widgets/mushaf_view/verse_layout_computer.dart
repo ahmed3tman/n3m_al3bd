@@ -52,9 +52,9 @@ class VerseLayoutComputer {
     const double maxFontSize = 46.0;
 
     // NEW: Constrain font size by available height to prevent clipping
-    // We want (fontSize * 1.8) * 15 <= availablePageHeight
-    // So fontSize <= availablePageHeight / 27.0
-    final double maxFontSizeForHeight = availablePageHeight / 27.0;
+    // We want (fontSize * 1.8) * 15 <= (availablePageHeight - 32)
+    // So fontSize <= (availablePageHeight - 32) / 27.0
+    final double maxFontSizeForHeight = (availablePageHeight - 32) / 27.0;
     if (fontSize > maxFontSizeForHeight) {
       fontSize = maxFontSizeForHeight;
     }

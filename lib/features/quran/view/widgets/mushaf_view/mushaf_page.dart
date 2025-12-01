@@ -58,8 +58,10 @@ class MushafPage extends StatelessWidget {
     }
 
     // 3. Render using layoutData
+    // Reserve space at the bottom to prevent clipping and reduce line spacing
+    final double effectivePageHeight = availablePageHeight - 32;
     final double dynamicLineHeightMap = (15 > 0 && layoutData.fontSize > 0)
-        ? (availablePageHeight / (15 * layoutData.fontSize))
+        ? (effectivePageHeight / (15 * layoutData.fontSize))
         : 1.9;
     final double safeLineHeightMap = dynamicLineHeightMap.clamp(1.2, 2.8);
     final double fixedLineHeightPx = layoutData.fontSize * safeLineHeightMap;
@@ -73,7 +75,7 @@ class MushafPage extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: ListView.builder(
-        padding: EdgeInsets.zero,
+        padding: const EdgeInsets.only(top: 10, bottom: 22),
         physics: const NeverScrollableScrollPhysics(),
         itemCount: 15,
         itemBuilder: (context, i) {

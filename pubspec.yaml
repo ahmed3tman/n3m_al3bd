@@ -107,6 +107,9 @@ flutter:
     - family: Verses
       fonts:
         - asset: assets/fonts/verses.ttf
+    - family: BasmalahFont
+      fonts:
+        - asset: assets/fonts/basmamlafont.ttf
 
 # Configure native splash screens for Android and iOS
 flutter_native_splash:

@@ -5,6 +5,7 @@ class AppFonts {
   static const String uthmanicHafs = 'UthmanicHafs';
   static const String suraNameFont = 'SuraNameFont';
   static const String generalFont = 'GeneralFont';
+  static const String basmalahFont = 'BasmalahFont';
   // Custom font for verse numbers (to be added by the user in pubspec/fonts)
   static const String versesFont = 'Verses';
 
@@ -86,7 +87,7 @@ class AppFonts {
     );
   }
 
-  /// نمط عناوين السور والأقسام
+  /// عناوين السور والأقسام
   static TextStyle suraNameStyle({
     double fontSize = titleSize,
     Color? color,
@@ -134,11 +135,11 @@ class AppFonts {
   /// نمط البسملة المزخرفة
   static TextStyle basmalahStyle({double fontSize = 24.0, Color? color}) {
     return TextStyle(
-      fontFamily: uthmanicHafs,
+      fontFamily: basmalahFont,
       fontSize: fontSize,
       color: color ?? secondaryTextColor,
       fontWeight: FontWeight.w600,
-      letterSpacing: 1.2,
+      letterSpacing: 0.0,
       height: 1.5,
     );
   }
