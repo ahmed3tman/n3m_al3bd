@@ -118,8 +118,7 @@ class MushafPage extends StatelessWidget {
             layoutData.fontSize,
           );
           return RichText(
-            textAlign:
-                (layoutData.fontSize == 25.0) // heuristic for centered
+            textAlign: layoutData.isCentered
                 ? TextAlign.center
                 : TextAlign.justify,
             textWidthBasis: TextWidthBasis.parent,

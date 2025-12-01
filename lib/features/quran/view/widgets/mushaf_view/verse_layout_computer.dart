@@ -345,6 +345,7 @@ class VerseLayoutComputer {
       letterSpacing: perLineLetterSpacing,
       lineDecos: decos,
       decoSurahIds: decoSurahIds,
+      isCentered: shouldCenterText,
     );
   }
 

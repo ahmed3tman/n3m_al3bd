@@ -12,6 +12,7 @@ class VerseLayoutData {
   final List<double> letterSpacing;
   final List<LineDeco> lineDecos;
   final List<int?> decoSurahIds;
+  final bool isCentered;
 
   const VerseLayoutData({
     required this.fontSize,
@@ -19,6 +20,7 @@ class VerseLayoutData {
     required this.letterSpacing,
     required this.lineDecos,
     required this.decoSurahIds,
+    this.isCentered = false,
   });
 }
 
