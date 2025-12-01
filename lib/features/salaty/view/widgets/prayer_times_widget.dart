@@ -153,6 +153,7 @@ class PrayerTimesWidget extends StatelessWidget {
             style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: isNext ? FontWeight.w400 : FontWeight.normal,
               color: isNext ? theme.colorScheme.primary : null,
+              fontFamily: 'NeoSansArabic',
             ),
           ),
         ],
