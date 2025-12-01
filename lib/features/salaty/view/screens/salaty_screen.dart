@@ -168,7 +168,7 @@ class _SalatyScreenState extends State<SalatyScreen> {
                           _cubit.saveCurrentDayToHistory();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('تم اضافة انجاز اليوم الي السجل'),
+                              content: Center(child: Text('تم اضافة انجاز اليوم الي السجل')),
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
