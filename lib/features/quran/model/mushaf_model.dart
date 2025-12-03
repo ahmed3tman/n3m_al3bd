@@ -46,13 +46,22 @@ class MushafStorage {
     await prefs.setString(_key, raw);
   }
 
-  static Future<Mushaf> addMushaf(String name) async {
+  static Future<Mushaf> addMushaf(
+    String name, {
+    bool startFromEnd = true,
+  }) async {
     final list = await loadMushafs();
+    // User logic:
+    // startFromEnd = true (From End) -> Normal (Page 1 -> Index 0)
+    // startFromEnd = false (From Beginning) -> Last Page (Page 604 -> Index 603)
+    final initialPage = startFromEnd ? 0 : 603;
+
     final m = Mushaf(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
-      currentSurahIndex: 0,
-      currentPageIndex: 0,
+      currentSurahIndex:
+          0, // We can leave this as 0 or try to find Surah for page 604, but page index is what matters for MushafScreen
+      currentPageIndex: initialPage,
     );
     list.insert(0, m);
     await saveMushafs(list);

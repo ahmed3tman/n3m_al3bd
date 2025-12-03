@@ -36,67 +36,149 @@ class _QuranScreenState extends State<QuranScreen> {
   }
 
   Future<void> _createMushafDialog(List surahs) async {
-    final controller = TextEditingController();
-    final name = await showDialog<String>(
+    final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (c) {
-        final theme = Theme.of(c);
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Text(
-              'إضافة ختمة',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w500, // Thinner title
-                color: theme.colorScheme.primary,
-                fontFamily: 'GeneralFont',
-              ),
-              textAlign: TextAlign.center,
-            ),
-            content: CustomTextField(
-              controller: controller,
-              hintText: 'اكتب اسم للخاتمه',
+        final controller = TextEditingController();
+        bool startFromEnd = true; // Default: Normal (From End)
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final theme = Theme.of(context);
+            return Directionality(
               textDirection: TextDirection.rtl,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(c),
-                child: Text(
-                  'إلغاء',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500, // Thinner
-                    fontFamily: 'GeneralFont',
-                    color: Colors.red.shade400,
-                  ),
+              child: AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(c, controller.text),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF81B29A), // Sage green
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  'إنشاء',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500, // Thinner
+                scrollable: true,
+                title: Text(
+                  'إضافة ختمة',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w500, // Thinner title
+                    color: theme.colorScheme.primary,
                     fontFamily: 'GeneralFont',
                   ),
+                  textAlign: TextAlign.center,
                 ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomTextField(
+                      controller: controller,
+                      hintText: 'اكتب اسم للخاتمه',
+                      textDirection: TextDirection.rtl,
+                    ),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'بداية المصحف:',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: theme.colorScheme.primary,
+                          fontFamily: 'GeneralFont',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withOpacity(0.3),
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          RadioListTile<bool>(
+                            title: Text(
+                              'من النهاية (المصحف الطبيعي)',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontFamily: 'GeneralFont',
+                                fontSize: 12,
+                              ),
+                            ),
+                            value: true,
+                            groupValue: startFromEnd,
+                            onChanged: (val) =>
+                                setState(() => startFromEnd = val!),
+                            activeColor: theme.colorScheme.primary,
+                            contentPadding: EdgeInsets.zero,
+                            dense: true,
+                          ),
+                          Divider(
+                            height: 1,
+                            color: theme.colorScheme.primary.withOpacity(0.1),
+                          ),
+                          RadioListTile<bool>(
+                            title: Text(
+                              'من البداية (آخر صفحة)',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontFamily: 'GeneralFont',
+                                fontSize: 12,
+                              ),
+                            ),
+                            value: false,
+                            groupValue: startFromEnd,
+                            onChanged: (val) =>
+                                setState(() => startFromEnd = val!),
+                            activeColor: theme.colorScheme.primary,
+                            contentPadding: EdgeInsets.zero,
+                            dense: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(c),
+                    child: Text(
+                      'إلغاء',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500, // Thinner
+                        fontFamily: 'GeneralFont',
+                        color: Colors.red.shade400,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(c, {
+                      'name': controller.text,
+                      'startFromEnd': startFromEnd,
+                    }),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF81B29A), // Sage green
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'إنشاء',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500, // Thinner
+                        fontFamily: 'GeneralFont',
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
-    if (name != null && name.trim().isNotEmpty) {
-      final m = await MushafStorage.addMushaf(name.trim());
+
+    if (result != null &&
+        result['name'] != null &&
+        result['name'].toString().trim().isNotEmpty) {
+      final name = result['name'].toString().trim();
+      final startFromEnd = result['startFromEnd'] as bool;
+
+      final m = await MushafStorage.addMushaf(name, startFromEnd: startFromEnd);
       setState(() => mushafs.insert(0, m));
       // open immediately
       if (!mounted) return;

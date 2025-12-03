@@ -147,10 +147,32 @@ class VerseLayoutComputer {
     }
 
     // NEW: Check if we should place header for next page's surah on line 15
-    // Only for Surahs 4 (An-Nisa) and 10 (Yunus)
+    // Only for Surahs 4 (An-Nisa) and 10 (Yunus) and others requested by user
+    final specialSurahs = {
+      4,
+      10,
+      24,
+      26,
+      27,
+      32,
+      33,
+      37,
+      38,
+      45,
+      47,
+      53,
+      60,
+      64,
+      65,
+      80,
+      82,
+      86,
+      91,
+    };
+
     if (nextPageTokens != null && mappedTokens[14].isEmpty) {
       // Line 15 (index 14) is empty on current page
-      // Check if next page starts with Surah 4 or 10
+      // Check if next page starts with a special Surah
       for (int i = 0; i < nextPageTokens.length; i++) {
         if (nextPageTokens[i].isNotEmpty) {
           final firstToken = nextPageTokens[i].first;
@@ -158,9 +180,8 @@ class VerseLayoutComputer {
           final isNextPageSurahStart =
               firstToken['aya_no'] == 1 && firstToken['word_pos'] == 1;
 
-          // Only apply to Surahs 4 (An-Nisa) and 10 (Yunus)
-          if (isNextPageSurahStart &&
-              (nextPageSurahId == 4 || nextPageSurahId == 10)) {
+          // Only apply to special Surahs
+          if (isNextPageSurahStart && specialSurahs.contains(nextPageSurahId)) {
             // Place header on line 15 of current page
             decos[14] = LineDeco.header;
             decoSurahIds[14] = nextPageSurahId;
@@ -189,10 +210,10 @@ class VerseLayoutComputer {
           // Track current empty line position for sequential assignment
           int currentEmptyLine = li;
 
-          // Special handling for Surahs 4 and 10:
+          // Special handling for special Surahs:
           // If only 1 empty line, header is on previous page, so only place basmalah
           final bool headerOnPreviousPage =
-              (surahId == 4 || surahId == 10) && emptyCount == 1;
+              specialSurahs.contains(surahId) && emptyCount == 1;
 
           // Place header on first empty line (unless it's on previous page)
           if (emptyCount >= 1 && !headerOnPreviousPage) {
