@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:n3m_al3bd/my_app.dart';
-import 'package:n3m_al3bd/features/quran/data/page_mapping_repository.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,13 +15,6 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-
-  // Preload Quran mapping data
-  try {
-    await PageMappingRepository.ensureLoaded();
-  } catch (_) {
-    // ignore non-fatal preload errors; app can still start
-  }
 
   // Preload Theme
   final prefs = await SharedPreferences.getInstance();

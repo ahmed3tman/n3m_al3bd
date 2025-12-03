@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:n3m_al3bd/core/share/widgets/custom_search_bar.dart';
 import 'package:n3m_al3bd/core/share/widgets/gradient_background.dart';
+import 'package:n3m_al3bd/core/share/widgets/custom_search_bar.dart';
+import 'package:n3m_al3bd/core/share/widgets/custom_reset_button.dart';
+import 'package:n3m_al3bd/features/azkar/view/screens/azkar_category_screen.dart';
+import 'package:n3m_al3bd/features/azkar/view/widgets/azkar_category_card.dart';
 import 'package:n3m_al3bd/features/azkar/cubit/azkar_cubit.dart';
 import 'package:n3m_al3bd/features/azkar/cubit/azkar_state.dart';
-import 'package:n3m_al3bd/features/azkar/view/widgets/azkar_card.dart';
 
 class AzkarScreen extends StatefulWidget {
   const AzkarScreen({super.key});
@@ -15,14 +17,30 @@ class AzkarScreen extends StatefulWidget {
 
 class _AzkarScreenState extends State<AzkarScreen> {
   String search = '';
-  String selectedCategory = 'الكل';
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AzkarCubit()..getAzkar(),
       child: GradientScaffold(
-        appBar: AppBar(title: const Text('الأذكار'), centerTitle: true),
+        appBar: AppBar(
+          title: const Text('الأذكار'),
+          centerTitle: true,
+          actions: [
+            BlocBuilder<AzkarCubit, AzkarState>(
+              builder: (context, state) {
+                return Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 16.0),
+                  child: CustomResetButton(
+                    onTap: () async {
+                      await AzkarCubit.get(context).clearAllRemaining();
+                      setState(() {});
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         body: Column(
           children: [
             Padding(
@@ -30,70 +48,10 @@ class _AzkarScreenState extends State<AzkarScreen> {
                 horizontal: 16.0,
                 vertical: 12.0,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CustomSearchBar(
-                      hintText: 'ابحث في الأذكار...',
-                      onChanged: (val) => setState(() => search = val),
-                      margin: EdgeInsets.zero,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  BlocBuilder<AzkarCubit, AzkarState>(
-                    builder: (context, state) {
-                      final scheme = Theme.of(context).colorScheme;
-                      final primary = scheme.primary;
-                      return Tooltip(
-                        message: 'إعادة تعيين العدادات',
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () async {
-                              await AzkarCubit.get(context).clearAllRemaining();
-                              setState(() {});
-                            },
-                            customBorder: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    primary.withOpacity(0.18),
-                                    primary.withOpacity(0.28),
-                                  ],
-                                ),
-                                border: Border.all(
-                                  color: primary.withOpacity(0.40),
-                                  width: 1,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: primary.withOpacity(0.15),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.restart_alt_rounded,
-                                color: primary,
-                                size: 22,
-                                semanticLabel: 'إعادة تعيين العدادات',
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              child: CustomSearchBar(
+                hintText: 'ابحث في الأذكار...',
+                onChanged: (val) => setState(() => search = val),
+                margin: EdgeInsets.zero,
               ),
             ),
             Expanded(
@@ -106,104 +64,79 @@ class _AzkarScreenState extends State<AzkarScreen> {
                   } else {
                     final cubit = AzkarCubit.get(context);
 
-                    // Build categories list (unique) with 'All' as the first item
-                    final categories = <String>{
+                    // 1. Get all unique categories
+                    final allCategories = <String>{
                       ...cubit.azkar
                           .map((e) => e.category)
                           .whereType<String>()
                           .where((c) => c.trim().isNotEmpty),
                     }.toList()..sort((a, b) => a.compareTo(b));
-                    final allCategories = ['الكل', ...categories];
 
-                    // Apply filters: if searching, search across ALL azkar; otherwise filter by category
+                    // 2. Filter categories based on search
                     final query = search.trim();
-                    final isSearching = query.isNotEmpty;
-                    final filteredAzkar = cubit.azkar.where((azkar) {
-                      final matchesCategory = isSearching
-                          ? true
-                          : (selectedCategory == 'الكل'
-                                ? true
-                                : (azkar.category == selectedCategory));
+                    final filteredCategories = allCategories.where((cat) {
+                      if (query.isEmpty) return true;
 
-                      if (!matchesCategory) return false;
+                      // Match category name
+                      if (cat.contains(query)) return true;
 
-                      if (!isSearching) return true;
-
-                      return (azkar.category?.contains(query) ?? false) ||
-                          (azkar.description?.contains(query) ?? false) ||
-                          (azkar.zekr?.contains(query) ?? false) ||
-                          (azkar.count?.toString().contains(query) ?? false) ||
-                          (azkar.reference?.contains(query) ?? false);
+                      // Or match any Azkar content within this category
+                      final azkarInCategory = cubit.azkar.where(
+                        (a) => a.category == cat,
+                      );
+                      return azkarInCategory.any(
+                        (a) =>
+                            (a.zekr?.contains(query) ?? false) ||
+                            (a.description?.contains(query) ?? false) ||
+                            (a.reference?.contains(query) ?? false),
+                      );
                     }).toList();
 
-                    return Column(
-                      children: [
-                        // Categories horizontal chips
-                        SizedBox(
-                          height: 45,
-                          child: ListView.separated(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              //  vertical: 1,
-                            ),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: allCategories.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(width: 8),
-                            itemBuilder: (context, index) {
-                              final cat = allCategories[index];
-                              final isSelected = selectedCategory == cat;
-                              return ChoiceChip(
-                                label: Text(cat),
-                                selected: isSelected,
-                                onSelected: (_) {
-                                  setState(() => selectedCategory = cat);
-                                },
-                                selectedColor: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withOpacity(0.15),
-                                labelStyle: TextStyle(
-                                  color: isSelected
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.onSurface,
-                                  fontWeight: isSelected
-                                      ? FontWeight.w600
-                                      : FontWeight.w500,
-                                ),
-                                shape: StadiumBorder(
-                                  side: BorderSide(
-                                    color: isSelected
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context).colorScheme.outline
-                                              .withOpacity(0.4),
+                    if (filteredCategories.isEmpty) {
+                      return const Center(child: Text('لا توجد نتائج'));
+                    }
+
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(16),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // 2 items per row
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 1.1, // Adjust for card height
+                          ),
+                      itemCount: filteredCategories.length,
+                      itemBuilder: (context, index) {
+                        final category = filteredCategories[index];
+
+                        // Calculate counts for this category
+                        final categoryAzkar = cubit.azkar
+                            .where((a) => a.category == category)
+                            .toList();
+                        final totalCount = categoryAzkar.length;
+                        final remainingCount = categoryAzkar
+                            .where((a) => cubit.getRemainingFor(a) > 0)
+                            .length;
+
+                        return AzkarCategoryCard(
+                          categoryName: category,
+                          totalCount: totalCount,
+                          remainingCount: remainingCount,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider.value(
+                                  value: cubit, // Pass existing cubit
+                                  child: AzkarCategoryScreen(
+                                    categoryName: category,
                                   ),
                                 ),
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.surface,
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        // List of azkar
-                        Expanded(
-                          child: filteredAzkar.isEmpty
-                              ? const Center(child: Text('لا توجد نتائج'))
-                              : ListView.builder(
-                                  itemCount: filteredAzkar.length,
-                                  itemBuilder: (context, index) {
-                                    final item = filteredAzkar[index];
-                                    return KeyedSubtree(
-                                      key: ValueKey(
-                                        '${cubit.resetEpoch}-${item.category ?? ''}-${item.zekr ?? ''}-${item.count ?? ''}',
-                                      ),
-                                      child: AzkarCard(azkarModel: item),
-                                    );
-                                  },
-                                ),
-                        ),
-                      ],
+                              ),
+                            );
+                          },
+                        );
+                      },
                     );
                   }
                 },

@@ -29,7 +29,12 @@ class PrayerTimesWidget extends StatelessWidget {
             offset: const Offset(0, 8),
           ),
         ],
-        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+        border: Border.all(
+          color: Colors.white.withOpacity(
+            theme.brightness == Brightness.dark ? 0.1 : 0.6,
+          ),
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,6 +167,7 @@ class PrayerTimesWidget extends StatelessWidget {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: isNext ? FontWeight.w400 : FontWeight.normal,
                       color: isNext ? theme.colorScheme.primary : null,
+                      fontFamily: 'GeneralFont',
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -174,7 +180,7 @@ class PrayerTimesWidget extends StatelessWidget {
             style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: isNext ? FontWeight.w400 : FontWeight.normal,
               color: isNext ? theme.colorScheme.primary : null,
-              fontFamily: 'NeoSansArabic',
+              fontFamily: 'GeneralFont',
             ),
           ),
         ],

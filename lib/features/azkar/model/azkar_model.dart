@@ -1,4 +1,3 @@
-
 class AzkarModel {
   final String? category;
   final String? zekr;
@@ -17,11 +16,14 @@ class AzkarModel {
   });
 
   factory AzkarModel.fromJson(Map<String, dynamic> json) {
+    final parsedCount = json['count'] is String
+        ? int.tryParse(json['count'])
+        : json['count'];
     return AzkarModel(
       category: json['category'],
       zekr: json['zekr'],
       description: json['description'],
-      count: json['count'] is String ? int.tryParse(json['count']) : json['count'],
+      count: (parsedCount == null || parsedCount == 0) ? 1 : parsedCount,
       reference: json['reference'],
       search: json['search'],
     );

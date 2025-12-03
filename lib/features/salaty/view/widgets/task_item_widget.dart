@@ -23,7 +23,11 @@ class TaskItemWidget extends StatelessWidget {
     List<BoxShadow> shadows = [];
 
     // Unified Glassy Border
-    border = Border.all(color: Colors.white.withOpacity(0.6), width: 1.5);
+    final isDark = theme.brightness == Brightness.dark;
+    border = Border.all(
+      color: Colors.white.withOpacity(isDark ? 0.1 : 0.6),
+      width: 1.5,
+    );
 
     if (isDisabled) {
       // Locked State
@@ -113,7 +117,12 @@ class TaskItemWidget extends StatelessWidget {
                                         ? theme.disabledColor
                                         : isCompleted
                                         ? const Color.fromARGB(146, 76, 175, 79)
-                                        : const Color.fromARGB(206, 219, 54, 54),
+                                        : const Color.fromARGB(
+                                            206,
+                                            219,
+                                            54,
+                                            54,
+                                          ),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -188,7 +197,12 @@ class TaskItemWidget extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
         border: isCompleted
-            ? Border.all(color: Colors.white, width: 1.5)
+            ? Border.all(
+                color: Colors.white.withOpacity(
+                  theme.brightness == Brightness.dark ? 0.1 : 1.0,
+                ),
+                width: 1.5,
+              )
             : Border.all(color: color.withOpacity(0.2)),
         boxShadow: isCompleted
             ? [

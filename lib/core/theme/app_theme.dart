@@ -293,7 +293,7 @@ class AppTheme {
       shadowColor: const Color(0x33000000),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-        side: BorderSide(color: Colors.white.withOpacity(0.1), width: 1.5),
+        side: BorderSide(color: Colors.white.withOpacity(0.05), width: 1.5),
       ),
     ),
     fontFamily: 'GeneralFont',

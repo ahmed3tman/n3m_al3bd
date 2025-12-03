@@ -20,7 +20,7 @@ class AzkarCubit extends Cubit<AzkarState> {
       '${m.category ?? ''}|${m.zekr ?? ''}|${m.count ?? ''}';
 
   int getRemainingFor(AzkarModel m) {
-    final total = m.count ?? 0;
+    final total = (m.count == null || m.count == 0) ? 1 : m.count!;
     final k = _keyFor(m);
     return _remainingByKey[k] ?? total;
   }
@@ -53,6 +53,26 @@ class AzkarCubit extends Cubit<AzkarState> {
   Future<void> setRemainingFor(AzkarModel m, int value) async {
     _remainingByKey[_keyFor(m)] = value;
     await _persistCounters();
+    // Emit success state to trigger UI rebuilds (e.g. for sorting)
+    emit(GetAzkarSuccessState());
+  }
+
+  Future<void> resetCategory(String category) async {
+    final keysToRemove = <String>[];
+    _remainingByKey.forEach((key, _) {
+      // Key format: category|zekr|count
+      if (key.startsWith('$category|')) {
+        keysToRemove.add(key);
+      }
+    });
+
+    for (final key in keysToRemove) {
+      _remainingByKey.remove(key);
+    }
+
+    await _persistCounters();
+    resetEpoch++;
+    emit(GetAzkarSuccessState());
   }
 
   Future<void> clearAllRemaining() async {

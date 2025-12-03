@@ -183,7 +183,7 @@ class _NavState extends State<Nav> with TickerProviderStateMixin {
                           dividerColor: Colors.transparent,
                           tabs: [
                             _buildTab('assets/icons/calendar.png', 'صلاتي', 0),
-                            _buildTab('assets/icons/quran.png', 'وِردي', 1),
+                            _buildTab('assets/icons/quran.png', 'قرآني', 1),
                             _buildTab('assets/icons/azkar.png', 'أذكاري', 2),
                           ],
                         ),

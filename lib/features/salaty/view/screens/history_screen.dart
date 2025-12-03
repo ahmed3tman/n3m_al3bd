@@ -132,7 +132,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
             offset: const Offset(0, 8),
           ),
         ],
-        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+        border: Border.all(
+          color: Colors.white.withOpacity(
+            theme.brightness == Brightness.dark ? 0.1 : 0.6,
+          ),
+          width: 1.5,
+        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
