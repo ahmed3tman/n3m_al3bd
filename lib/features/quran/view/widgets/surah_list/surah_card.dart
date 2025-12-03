@@ -101,7 +101,7 @@ class SurahCard extends StatelessWidget {
             style: AppFonts.suraNameStyle(
               fontSize: 40,
               fontWeight: FontWeight.w800,
-              color: const Color.fromARGB(255, 5, 90, 95),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           // Subtitle contains only the details row

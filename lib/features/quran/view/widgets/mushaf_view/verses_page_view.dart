@@ -63,7 +63,8 @@ class _VersesPageViewState extends State<VersesPageView> {
             : null;
 
         if (mappedTokens != null && mappedTokens.isNotEmpty) {
-          final horizontalPadding = 4.0;
+          final horizontalPadding = 5.0; // Increased text padding for gap
+          final borderPadding = 1.0; // Border padding
           final media = MediaQuery.of(context);
           final availableWidth = media.size.width - horizontalPadding * 2;
           final double mediaTop = media.padding.top;
@@ -87,17 +88,47 @@ class _VersesPageViewState extends State<VersesPageView> {
 
           return _KeepAliveWrap(
             child: RepaintBoundary(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: MushafPage(
-                  pageIndex: pageIndex,
-                  mappedTokens: mappedTokens,
-                  allSurahs: widget.allSurahs!,
-                  availableWidth: availableWidth,
-                  availablePageHeight: availablePageHeight,
-                  pageStartSurahIds: widget.pageStartSurahIds,
-                  nextPageTokens: nextPageTokens, // NEW: Pass next page tokens
-                ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                    ),
+                    child: MushafPage(
+                      pageIndex: pageIndex,
+                      mappedTokens: mappedTokens,
+                      allSurahs: widget.allSurahs!,
+                      availableWidth: availableWidth,
+                      availablePageHeight: availablePageHeight,
+                      pageStartSurahIds: widget.pageStartSurahIds,
+                      nextPageTokens: nextPageTokens,
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          right: 0.3,
+                          left: 0.3,
+                          top: 6,
+                          bottom: 10,
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.5),
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -119,9 +150,32 @@ class _VersesPageViewState extends State<VersesPageView> {
                   alignment: Alignment.topCenter,
                   child: SizedBox(
                     height: availablePageHeight,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: SizedBox.shrink(),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5.0),
+                          child: const SizedBox.expand(),
+                        ),
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 1.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withOpacity(0.5),
+                                    width: 2.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -137,7 +191,7 @@ class _VersesPageViewState extends State<VersesPageView> {
     if (widget.lineMappingByPageTokens == null) return;
 
     final media = MediaQuery.of(context);
-    final horizontalPadding = 4.0;
+    final horizontalPadding = 5.0;
     final availableWidth = media.size.width - horizontalPadding * 2;
     final double mediaTop = media.padding.top;
     final double availablePageHeight =

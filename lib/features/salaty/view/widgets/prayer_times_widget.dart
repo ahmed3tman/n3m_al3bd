@@ -49,11 +49,32 @@ class PrayerTimesWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                'مواقيت الصلاة',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18,
+              Expanded(
+                child: Row(
+                  children: [
+                    Text(
+                      'مواقيت الصلاة',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontFamily: 'GeneralFont',
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (prayerTimes.locationName != null) ...[
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          '- ${prayerTimes.locationName}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.textTheme.bodySmall?.color
+                                ?.withOpacity(0.7),
+                            fontFamily: 'GeneralFont',
+                            fontSize: 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],

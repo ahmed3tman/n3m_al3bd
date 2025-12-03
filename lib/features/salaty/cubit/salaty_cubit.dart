@@ -117,7 +117,8 @@ class SalatyCubit extends Cubit<SalatyState> {
           currentTimes.dhuhr == newPrayerTimes.dhuhr &&
           currentTimes.asr == newPrayerTimes.asr &&
           currentTimes.maghrib == newPrayerTimes.maghrib &&
-          currentTimes.isha == newPrayerTimes.isha) {
+          currentTimes.isha == newPrayerTimes.isha &&
+          currentTimes.locationName == newPrayerTimes.locationName) {
         return;
       }
 

@@ -2,6 +2,7 @@ import 'package:adhan/adhan.dart' as adhan;
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geocoding/geocoding.dart';
 import '../models/prayer_times_model.dart';
 
 class PrayerTimesService {
@@ -33,20 +34,43 @@ class PrayerTimesService {
       // First try to get location
       final position = await _getLocation();
       if (position != null) {
-        return _calculatePrayerTimes(position.latitude, position.longitude);
+        final locationName = await _getLocationName(
+          position.latitude,
+          position.longitude,
+        );
+        return _calculatePrayerTimes(
+          position.latitude,
+          position.longitude,
+          locationName: locationName,
+        );
       }
 
       // If location not available, try cached location
       final cachedPosition = await _getCachedLocation();
       if (cachedPosition != null) {
+        // Try to get location name for cached position too if possible, or use cached name if we had one (but we don't cache name separately yet)
+        // For now, let's try to fetch name again or pass null
+        String? locationName;
+        try {
+          locationName = await _getLocationName(
+            cachedPosition['lat']!,
+            cachedPosition['lon']!,
+          );
+        } catch (_) {}
+
         return _calculatePrayerTimes(
           cachedPosition['lat']!,
           cachedPosition['lon']!,
+          locationName: locationName,
         );
       }
 
       // Fallback to default location (Cairo)
-      return _calculatePrayerTimes(30.0444, 31.2357);
+      return _calculatePrayerTimes(
+        30.0444,
+        31.2357,
+        locationName: 'القاهرة, مصر',
+      );
     } catch (e) {
       return null;
     }
@@ -87,7 +111,11 @@ class PrayerTimesService {
   }
 
   /// Calculate prayer times using Adhan package
-  PrayerTimes _calculatePrayerTimes(double latitude, double longitude) {
+  PrayerTimes _calculatePrayerTimes(
+    double latitude,
+    double longitude, {
+    String? locationName,
+  }) {
     final today = DateTime.now();
     final coordinates = adhan.Coordinates(latitude, longitude);
 
@@ -104,6 +132,7 @@ class PrayerTimesService {
       maghrib: adhanPrayerTimes.maghrib,
       isha: adhanPrayerTimes.isha,
       date: DateTime(today.year, today.month, today.day),
+      locationName: locationName,
     );
 
     // Cache the calculated times
@@ -141,7 +170,8 @@ class PrayerTimesService {
       '${times.asr.toIso8601String()},'
       '${times.maghrib.toIso8601String()},'
       '${times.isha.toIso8601String()},'
-      '${times.date.toIso8601String()}',
+      '${times.date.toIso8601String()},'
+      '${times.locationName ?? ""}',
     );
   }
 
@@ -154,7 +184,8 @@ class PrayerTimesService {
       if (cached == null) return null;
 
       final parts = cached.split(',');
-      if (parts.length != 6) return null;
+      // Support both old format (6 parts) and new format (7 parts)
+      if (parts.length < 6) return null;
 
       final times = PrayerTimes(
         fajr: DateTime.parse(parts[0]),
@@ -163,6 +194,7 @@ class PrayerTimesService {
         maghrib: DateTime.parse(parts[3]),
         isha: DateTime.parse(parts[4]),
         date: DateTime.parse(parts[5]),
+        locationName: parts.length > 6 && parts[6].isNotEmpty ? parts[6] : null,
       );
 
       // Only return if it's for today
@@ -190,5 +222,28 @@ class PrayerTimesService {
     if (now.isBefore(times.isha)) return 'isha';
 
     return null; // All prayers have passed
+  }
+
+  /// Get location name (City, Country) from coordinates
+  Future<String?> _getLocationName(double lat, double lon) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lon);
+
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        final city = place.locality ?? place.subAdministrativeArea;
+        final country = place.country;
+
+        if (city != null && country != null) {
+          return '$city, $country';
+        } else if (country != null) {
+          return country;
+        }
+      }
+      return '${lat.toStringAsFixed(2)}, ${lon.toStringAsFixed(2)}';
+    } catch (e) {
+      // Fallback to coordinates if geocoding fails
+      return '${lat.toStringAsFixed(2)}, ${lon.toStringAsFixed(2)}';
+    }
   }
 }

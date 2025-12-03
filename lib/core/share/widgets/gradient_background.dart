@@ -9,8 +9,13 @@ class GradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: const BoxDecoration(gradient: AppTheme.backgroundGradient),
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? AppTheme.darkBackgroundGradient
+            : AppTheme.backgroundGradient,
+      ),
       child: child,
     );
   }

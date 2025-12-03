@@ -17,6 +17,7 @@ class PrayerTimes {
   final DateTime maghrib;
   final DateTime isha;
   final DateTime date;
+  final String? locationName;
 
   const PrayerTimes({
     required this.fajr,
@@ -25,6 +26,7 @@ class PrayerTimes {
     required this.maghrib,
     required this.isha,
     required this.date,
+    this.locationName,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +37,7 @@ class PrayerTimes {
       'maghrib': maghrib.toIso8601String(),
       'isha': isha.toIso8601String(),
       'date': date.toIso8601String(),
+      if (locationName != null) 'locationName': locationName,
     };
   }
 
@@ -46,6 +49,7 @@ class PrayerTimes {
       maghrib: DateTime.parse(map['maghrib'] as String),
       isha: DateTime.parse(map['isha'] as String),
       date: DateTime.parse(map['date'] as String),
+      locationName: map['locationName'] as String?,
     );
   }
 
